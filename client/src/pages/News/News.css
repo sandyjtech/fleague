@@ -1,0 +1,48 @@
+
+.news-container {   
+  text-align: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.news-card-container {  
+  display: flex;
+  position: relative;
+  overflow-wrap: break-word;
+
+}
+div .news-section{
+  font-family: 'Mukta', sans-serif;
+  background-color: white; 
+}
+.news-row-wrapper {
+  display: flex;
+  overflow-x: auto; 
+  -webkit-overflow-scrolling: touch; 
+  scrollbar-width: none; 
+  justify-content: center; 
+}
+
+/* Styles for the news row */
+.news-row {
+  background-color: #142e60; 
+  display: flex;
+  overflow-x: auto; 
+  white-space: nowrap; 
+  padding: 5px; 
+}
+
+/* Styles for each news section */
+.news-section {  
+  flex: 0 0 auto; 
+  border-radius: 8px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+  margin: 0 3%; 
+  position: relative;
+  cursor: pointer; 
+  overflow: hidden;
+  font-family: 'Roboto Slab', serif; 
+}
+
+
+

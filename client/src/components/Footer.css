@@ -1,0 +1,16 @@
+/* Footer.css */
+
+.footer {
+  background-color: #142e60;  
+  color: white;
+  text-align: center;
+  padding: 20px 0;
+  position: relative;  
+  z-index: 1; /* Ensure the footer is above other content */
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

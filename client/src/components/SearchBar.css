@@ -1,0 +1,50 @@
+/* SearchBar.css */
+.searchbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;   
+  border-radius: 5px;
+}
+
+.searchbar label {
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.search-input-container {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+}
+
+#search {
+  flex-grow: 1;
+  padding: 2%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+button {  
+  color: #c31111;
+  border: none;
+  padding: 5%;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Responsive styles */
+@media (max-width: 2500px) {
+  .searchbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .searchbar label {
+    margin-bottom: 10px;
+  }
+
+  .search-input-container {
+    width: 35%;
+    margin: 0 auto;
+  }
+}

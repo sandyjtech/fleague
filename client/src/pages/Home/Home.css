@@ -1,0 +1,50 @@
+/* Home.css */
+
+.home {
+  display: flex;
+  flex-direction: column; /* Change to a column layout */
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  background-color: #f2f2f2;
+  padding-bottom: 200px;
+}
+
+.divider {
+  border-top: 1px dashed #ccc;
+  width: 80%;
+  margin: 20px auto;
+}
+.title {
+  font-size: x-large;
+  color: #333;
+  margin: 15px;
+  text-align: left;
+}
+/* Home.css */
+
+/* Style for the container that holds the scrollable row */
+.stat-card-container {
+  font-family: 'Mukta', sans-serif;  
+  display: flex;
+  overflow-x: auto; 
+  white-space: nowrap; 
+  padding: 16px; 
+}
+
+/* Style for individual stat cards */
+.stat-card {
+  flex: 0 0 auto; /* Ensure cards don't grow and take up all available space */
+  margin-right: 16px; /* Add margin between cards for spacing */
+  border: 1px solid #ccc; /* Add a border for separation */
+  padding: 16px; /* Add padding for spacing within cards */
+  min-width: 250px; /* Set a minimum width for the cards */
+  /* Optional: Add more styling as needed to match your design */
+}
+
+/* Optional: Add more styling as needed to match your design */
+/* font-family: 'Mukta', sans-serif;
+font-family: 'Roboto Slab', serif; */
+/*dark gray   background-color: #333; */
+/* dark blue background-color: #142e60; */

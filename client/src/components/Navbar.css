@@ -1,0 +1,96 @@
+/* Navbar Container */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  background-color: #142e60;
+  color: white;
+  font-weight: bold;
+}
+
+/* Logo */
+.logo {
+  font-size: 24px;
+  color: rgb(144, 216, 238);
+}
+
+/* Desktop Menu */
+.desktop-menu {
+  display: flex;
+  gap: 10%;
+  text-align: center;
+}
+
+.desktop-menu .menu-item {
+  cursor: pointer;
+  transition: color 0.2s;
+  background-color: #142e60;
+  color: white;
+  text-decoration: none;
+  display: flex; /* Add this line */
+  justify-content: center; /* Add this line */
+  align-items: center; /* Add this line */
+}
+.rights:hover {
+  background-color: #142e60;
+  color: rgb(13, 234, 13);
+  font-size: large;
+}
+
+.desktop-menu .menu-item:hover {
+  color: rgb(13, 234, 13);
+  font-size: large;
+}
+
+/* Active Menu Item */
+.desktop-menu .menu-item.active {
+  color: rgb(13, 234, 13); 
+  background-color: #142e60; }
+
+/* Footer.css */
+.footer {
+  background-color: #142e60;
+  color: white;
+  text-align: center;
+  padding: 20px 0;
+  position: relative;
+  z-index: 1; /* Ensure the footer is above other content */
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Social Icons */
+.social-icons {
+  margin-bottom: 20px;
+}
+
+.social-icons a {
+  margin-right: 20px;
+  font-size: 24px;
+  color: white;
+  text-decoration: none;
+}
+
+.social-icons a:last-child {
+  margin-right: 0;
+}
+
+/* Copyright Icon */
+.footer-items p {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: white;
+}
+
+.footer-items p svg {
+  margin-right: 5px;
+  font-size: 16px;
+}
