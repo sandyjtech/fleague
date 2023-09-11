@@ -7,10 +7,10 @@ from config import db, bcrypt
 # Models go here!
 class User(db.Model, SerializerMixin):
     __tablename__ = "users"    
-    id = db.Column(db.String, primary_key=True, unique=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     username = db.Column(db.String(15), nullable=False)
     email = db.Column(db.String(255), nullable=False)
-    _password = db.Column(db.String, nullable=False)   
+    _password = db.Column(db.String, nullable=False) 
         
     user_posts = db.relationship("Post", backref="user")
     post_comments = db.relationship("Comment", backref="user")
@@ -18,8 +18,10 @@ class User(db.Model, SerializerMixin):
     my_players = association_proxy("my_team", "team_player")
     leagues = association_proxy('league_members', 'league')
     user_post_comments = association_proxy("Post", "post_comments")    
-    serialize_rules = ("-leagues", "-leagues.league_members.user",)
-
+    serialize_rules = ("-user_posts",
+                       "-post_comments",
+                       "-my_team",
+                       "-leagues.league_members.user", "-user_post_comments.post_comments",)
     
     @validates('email')
     def validate_email(self, key, email):
@@ -61,14 +63,14 @@ class User(db.Model, SerializerMixin):
 
 class LeagueMember(db.Model, SerializerMixin):
     __tablename__ ="league_members"
-    id = db.Column(db.String, primary_key=True, unique=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     league_id = db.Column(db.Integer, db.ForeignKey('leagues.id'))
     role = db.Column(db.String)
       
 class League(db.Model, SerializerMixin):
     __tablename__ = "leagues"
-    id = db.Column(db.String, primary_key=True, unique=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     name = db.Column(db.String, nullable=False)
     members = db.relationship(LeagueMember, backref="league")
 
@@ -76,25 +78,25 @@ class League(db.Model, SerializerMixin):
 
 class Post(db.Model, SerializerMixin):
     __tablename__ = "posts"
-    id = db.Column(db.String, primary_key=True, unique=True, nullable=False)    
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     title = db.Column(db.String(255), nullable=False)
     content = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     post_comments = db.relationship("Comment", backref="post")
-    serialize_rules = ("-post_comments.post",)  
-    
+    serialize_rules = ("-post_comments.post.post_comments",)
+     
 class Comment(db.Model, SerializerMixin):
     __tablename__ = "comments"
-    id = db.Column(db.String, primary_key=True, unique=True, nullable=False)       
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     content = db.Column(db.String(255), nullable=False)    
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))    
     
-    serialize_rules = ("-post_comments.post",)
+    serialize_rules = ("-post.post_comments.post",)
     
 class FantasyTeam(db.Model, SerializerMixin):
     __tablename__ = "fantasy_teams"
-    id = db.Column(db.String, primary_key=True, unique=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     name = db.Column(db.String())
     team_player = db.relationship("FantasyPlayer", backref="fantasy_team")
@@ -102,7 +104,7 @@ class FantasyTeam(db.Model, SerializerMixin):
 
 class FantasyPlayer(db.Model, SerializerMixin):
     __tablename__ = "fantasy_players"
-    id = db.Column(db.String, primary_key=True, unique=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     name = db.Column(db.String)
     position = db.Column(db.String)
     team = db.Column(db.String)
@@ -119,7 +121,7 @@ class FantasyPlayer(db.Model, SerializerMixin):
 
 class PlayerPerformance(db.Model, SerializerMixin):
     __tablename__ = "player_performances"
-    id = db.Column(db.String, primary_key=True, unique=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     fantasy_player_id = db.Column(db.Integer, db.ForeignKey("fantasy_players.id"))
     opponent_player_id = db.Column(db.Integer, db.ForeignKey("fantasy_players.id"), nullable=True)
     week_num = db.Column(db.Integer)
@@ -135,8 +137,8 @@ class NFLPlayer(db.Model, SerializerMixin):
     espn_id = db.Column(db.String, nullable=True)
     stats_id = db.Column(db.String, nullable=True)
     status = db.Column(db.String, nullable=True)
-    first_name = db.Column(db.String, nullable=True)
-    last_name = db.Column(db.String, nullable=True)
+    first_name = db.Column(db.String(255), index=True)  # Index this column
+    last_name = db.Column(db.String(255), index=True)
     age = db.Column(db.Integer, nullable=True)
     height = db.Column(db.String, nullable=True)
     weight = db.Column(db.String, nullable=True)

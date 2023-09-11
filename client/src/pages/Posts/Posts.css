@@ -1,139 +1,143 @@
-/* posts.css */
+/* Posts.css */
 
-.post-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 20px;
-    max-width: 900px;
-    margin: 5% auto;
-  }
-  
-  .post {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 20px;
-    width: 100%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .posts h2 {
-    font-size: 1.5rem;
-    margin: 0;
-  }
-  
-  .posts p {
-    font-size: 1.2rem;
-    margin-top: 10px;
-  }
-  
-  .comment-section {
-    margin-top: 20px;
-  }
-  
-  .comment {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 10px;
-  }
-  
-  .comment-content {
-    width: 70%;
-  }
-  
-  .comment-content p {
-    margin: 0;
-  }
-  
-  .like-count {
-    font-weight: bold;
-    margin-left: 10px;
-    font-size: 1rem;
-  }
-  
-  .comment-input {
-    width: 70%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    margin-top: 10px;
-  }
-  
-  .comment-button {
-    background-color: #333;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    padding: 5px 10px;
-    cursor: pointer;
-    margin-left: 10px;
-  }
-  
-  .comment-button:hover {
-    background-color: rgb(85, 144, 210);
-  }
-  
-  .comment-buttons {
-    display: flex;
-    align-items: center;
-  }
-  
-  .comment-buttons button {
-    background-color: #333;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    padding: 5px 10px;
-    cursor: pointer;
-    margin-left: 10px;
-    display: flex;
-    align-items: center;
-  }
-  
-  .comment-buttons button:hover {
-    background-color: rgb(85, 144, 210);
-  }
-  
-  .comment-buttons button svg {
-    margin-right: 5px;
-  }
-  .comment-buttons {
-    display: flex;
-    align-items: center;
-    margin-top: 10px;
-  }
-  
-  .comment-buttons button {
-    background-color: #333;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    padding: 5px 10px;
-    cursor: pointer;
-    margin-left: 10px;
-  }
-  
-  .comment-buttons button:hover {
-    background-color: rgb(85, 144, 210);
-  }
-  
-  /* Styles for the edit form */
-  .comment-content textarea {
-    width: 100%; /* Take up the entire width of the parent container */
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    margin-top: 10px;
-    resize: vertical; /* Allow vertical resizing of the textarea */
-  }
-  
-  .comment-buttons .save-button {
-    background-color: #4CAF50; /* Green */
-  }
-  
-  .comment-buttons .save-button:hover {
-    background-color: #45a049;
-    color: white;
-  }
+.posts-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 20px;
+  max-width: 900px;
+  margin: 5% auto;
+}
+
+.post {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 20px;
+  width: 100%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.post h2 {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.post p {
+  font-size: 1.2rem;
+  margin-top: 10px;
+}
+
+.comment-section {
+  margin-top: 20px;
+}
+
+.comment {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.comment-content {
+  width: 70%;
+}
+
+.comment-content p {
+  margin: 0;
+}
+
+.like-count {
+  font-weight: bold;
+  margin-left: 10px;
+  font-size: 1rem;
+}
+
+.comment-input {
+  width: 70%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.comment-button {
+  background-color: #142e60;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.comment-button:hover {
+  background-color: rgb(85, 144, 210);
+}
+
+.comment-buttons {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.comment-buttons button {
+  background-color: #142e60;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.comment-buttons button:hover {
+  background-color: rgb(85, 144, 210);
+}
+
+.comment-buttons button svg {
+  margin-right: 5px;
+}
+
+.edit-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.edit-button:hover {
+  background-color: #0056b3;
+}
+
+.delete-button {
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.delete-button:hover {
+  background-color: #c82333;
+}
+
+.comment-content textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-top: 10px;
+  resize: vertical;
+}

@@ -1,25 +1,13 @@
 import React, { useState } from "react";
-import { useNavigate } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useUserAuth } from "../context/UserAuthProvider";
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import Visibility from "@mui/icons-material/Visibility";
 
-
-function Signup({onSignup}) {
+function Signup() {
   const { signUp, handleAuthSubmit, handleClick, error } = useUserAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
-  const navigate = useNavigate();;
-
-  const spaceOptions = [
-    "Owned-Home with no yard",
-    "Owned-Home with yard",
-    "Lease-Home with no yard",
-    "Leased-Home with yard",
-  ];
-
 
 
   return (
@@ -32,30 +20,30 @@ function Signup({onSignup}) {
       <Formik
         initialValues={{
           username: "",
-          password: "",
-          confirmPassword: "",
-          address: "",
-          small_kids: false,
-          own_pets: false,
-          space: "",
           email: "",
+          password: "",
+          confirmPassword: "",         
         }}
         validationSchema={Yup.object({
           username: Yup.string().required("Username is required"),
           password: Yup.string()
-          .required("Password is required")
-          .min(6, "Password must be at least 6 characters long.")
-          .matches(/[A-Z]/, "Password must contain at least one uppercase letter.")
-          .matches(/[0-9]/, "Password must contain at least one digit.")
-          .matches(/[!@#$%^&*()_\-+=<>?/~.]/, "Password must contain at least one special character."),
+            .required("Password is required")
+            .min(6, "Password must be at least 6 characters long.")
+            .matches(
+              /[A-Z]/,
+              "Password must contain at least one uppercase letter."
+            )
+            .matches(/[0-9]/, "Password must contain at least one digit.")
+            .matches(
+              /[!@#$%^&*()_\-+=<>?/~.]/,
+              "Password must contain at least one special character."
+            ),
           confirmPassword: signUp
             ? Yup.string()
                 .oneOf([Yup.ref("password"), null], "Passwords must match")
                 .required("Confirm Password is required")
-            : Yup.string(),
-          address: Yup.string().required("Address is required"),
-          small_kids: Yup.boolean(),
-          own_pets: Yup.boolean(),
+            : Yup.string(),        
+         
           space: Yup.string(),
           email: signUp
             ? Yup.string()
@@ -64,10 +52,7 @@ function Signup({onSignup}) {
             : Yup.string(),
         })}
         onSubmit={(values, actions) => {
-          handleAuthSubmit(values, actions, "signup");
-          navigate.push("/profile/:id");     
-       
-          onSignup();
+          handleAuthSubmit(values, actions, "signup");                   
         }}
       >
         {({ isSubmitting }) => (
@@ -78,6 +63,11 @@ function Signup({onSignup}) {
               <ErrorMessage name="username" />
             </div>
             <div>
+              <label htmlFor="email">Email</label>
+              <Field type="text" id="email" name="email" />
+              <ErrorMessage name="email" />
+            </div>
+            <div>
               <label htmlFor="password">Password</label>
               <Field
                 type={showPassword ? "text" : "password"}
@@ -85,7 +75,7 @@ function Signup({onSignup}) {
                 name="password"
                 autoComplete="current-password"
               />
-              <VisibilityIcon
+              <Visibility
                 onClick={() => setShowPassword(!showPassword)}
                 style={{ cursor: "pointer" }}
               />
@@ -99,37 +89,13 @@ function Signup({onSignup}) {
                 name="confirmPassword"
                 autoComplete="current-password"
               />
-              <VisibilityIcon
+              <Visibility
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 style={{ cursor: "pointer" }}
               />
               <ErrorMessage name="confirmPassword" />
             </div>
-            <div>
-              <label htmlFor="address">Address</label>
-              <Field type="text" id="address" name="address" />
-              <ErrorMessage name="address" />
-            </div>
-            <div>
-              <label htmlFor="small_kids">Small Kids</label>
-              <Field type="checkbox" id="small_kids" name="small_kids" />
-            </div>
-            <div>
-              <label htmlFor="own_pets">Own Pets</label>
-              <Field type="checkbox" id="own_pets" name="own_pets" />
-            </div>
-            <div>
-              <label htmlFor="space">Space</label>
-              <Field as="select" id="space" name="space">
-                <option value="">Select space option</option>
-                {spaceOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </Field>
-              <ErrorMessage name="space" />
-            </div>
+
             {signUp && (
               <div>
                 <label htmlFor="email">Email</label>
@@ -138,9 +104,8 @@ function Signup({onSignup}) {
               </div>
             )}
             <div>
-            <button type="submit" disabled={isSubmitting}>
+              <button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? "Loading..." : "Sign Up"}
-                
               </button>
             </div>
           </Form>
@@ -151,4 +116,3 @@ function Signup({onSignup}) {
 }
 
 export default Signup;
-

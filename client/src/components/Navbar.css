@@ -2,12 +2,16 @@
 .navbar {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  text-align: center;
-  padding: 20px;
   background-color: #142e60;
-  color: white;
   font-weight: bold;
+  color: white;
+  text-align: center;
+  padding: 20px 0;
+  position: fixed;
+  margin: 0 auto;
+  bottom: 0; 
+  z-index: 1;
+  width: 100%;
 }
 
 /* Logo */
@@ -19,8 +23,10 @@
 /* Desktop Menu */
 .desktop-menu {
   display: flex;
-  gap: 10%;
+  justify-content: space-between; /* Distribute items evenly */
   text-align: center;
+  margin: 0 auto;
+  
 }
 
 .desktop-menu .menu-item {
@@ -29,9 +35,11 @@
   background-color: #142e60;
   color: white;
   text-decoration: none;
-  display: flex; /* Add this line */
-  justify-content: center; /* Add this line */
-  align-items: center; /* Add this line */
+  flex-grow: 1; /* Grow and evenly space the menu items */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 15px; /* Add padding to space out items */
 }
 .rights:hover {
   background-color: #142e60;

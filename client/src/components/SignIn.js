@@ -2,10 +2,8 @@ import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useUserAuth } from "../context/UserAuthProvider";
-import { useNavigate } from 'react-router-dom';
 
-function SignIn({ onSignIn }) {
-    const navigate = useNavigate();
+function SignIn() {
 
   const { handleAuthSubmit, error } = useUserAuth();
 
@@ -24,8 +22,7 @@ function SignIn({ onSignIn }) {
         })}
         onSubmit={(values, actions) => {
           handleAuthSubmit(values, actions, "SignIn");
-          navigate.push("/profile");
-          onSignIn();
+              
         }}
       >
         {({ isSubmitting }) => (

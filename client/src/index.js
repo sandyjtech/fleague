@@ -1,17 +1,21 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { BrowserRouter as Router } from 'react-router-dom'; // Import BrowserRouter
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom";
+import { BrowserRouter as Router } from "react-router-dom"; // Import BrowserRouter
+import "./index.css";
+import App from "./App";
+import PostsProvider from "./context/PostsContext";
+import UserAuthProvider from "./context/UserAuthProvider";
 
-ReactDOM.render(
-  <Router>
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  </Router>,
-  document.getElementById('root')
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(
+  <React.StrictMode>
+    <Router>
+      <UserAuthProvider>
+        <PostsProvider>
+          <App />
+        </PostsProvider>
+      </UserAuthProvider>
+    </Router>
+  </React.StrictMode>
 );
 
-reportWebVitals();

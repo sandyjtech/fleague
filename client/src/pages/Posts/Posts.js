@@ -1,28 +1,71 @@
-import React, { useState, useEffect } from 'react';
-import './Posts.css'; // Import the CSS file
-import { FaTrash, FaPencilAlt } from 'react-icons/fa';
-import { usePosts } from '../../context/PostsContext';
-import { Link } from 'react-router-dom';
-import SearchBar from "../../components/SearchBar";
-import { FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import "./Posts.css"; // Import the CSS file
+import { FaTrash, FaPencilAlt, FaThumbsUp, FaThumbsDown, FaPlus } from "react-icons/fa"; // Added FaPlus for the "Add New Post" button
+import { usePosts } from "../../context/PostsContext";
+import NewPostForm from "./NewPostForm";
+import { useUserAuth } from "../../context/UserAuthProvider";
 
-const Posts = () => {  
-const [searchQuery, setSearchQuery] = useState("");
-const { posts, postComment, comments, setComments, fetchCommentsByPostId,  deleteComment, patchComment } = usePosts();
-
+const Posts = () => {
+  const {
+    posts,
+    postComment,
+    comments,
+    setComments,
+    fetchCommentsByPostId,
+    deleteComment,
+    patchComment,
+    updatePost,
+    deletePost,
+  } = usePosts();
+  const { user } = useUserAuth();
   // State for managing likes
   const [likes, setLikes] = useState({});
-  
+
   // State to track the visibility of the comment section for each post
   const [commentSectionVisibility, setCommentSectionVisibility] = useState({});
-  
+
   // State to track the comment being edited
   const [editingComment, setEditingComment] = useState(null);
-  const [editedCommentText, setEditedCommentText] = useState(""); 
+  const [editedCommentText, setEditedCommentText] = useState("");
+  const [editingPost, setEditingPost] = useState(null);
+  const [editedPostText, setEditedPostText] = useState("");
+  const [isAddingNewPost, setIsAddingNewPost] = useState(false);
+const toggleNewPostForm = () => {
+    setIsAddingNewPost(!isAddingNewPost);
+  };
+  // Function to start editing a post
+  const startEditPost = (postId) => {
+    console.log("Editing post with ID:", postId);
+    const postToEdit = posts.find((post) => post.id === postId);
+    if (postToEdit) {
+      setEditingPost(postId);
+      setEditedPostText(postToEdit.content); // Update with the post content
+    } else {
+      console.error("Post not found.");
+    }
+  };
+
+  // Function to save the edited post
+  const saveEditedPost = (postId, newText) => {
+    // Assuming you have a function to update posts in your context, you should call it here.
+    // Replace 'updatePost' with your actual function.
+    updatePost(postId, { content: newText }); // Assuming you have a function to update posts
+
+    // After saving the edited post, clear the editing state
+    setEditingPost(null);
+    setEditedPostText("");
+  };
+
+  // Function to cancel editing a post
+  const cancelEditPost = () => {
+    setEditingPost(null);
+    setEditedPostText("");
+  };
 
   // Function to add a new comment
-  const addComment = (emailAddress, liked, postId, commentText) => {
-    postComment(emailAddress, liked, postId, commentText);
+  const addComment = (userId, postId, commentText) => {
+    postComment(userId, postId, commentText);
   };
 
   // Function to handle liking a comment
@@ -32,18 +75,29 @@ const { posts, postComment, comments, setComments, fetchCommentsByPostId,  delet
     newLikes[commentId] = !newLikes[commentId];
     setLikes(newLikes);
   };
+
   // Function to delete a comment
+  const removeComment = (commentId) => {
+    const commentToDelete = comments.find(
+      (comment) => comment.id === commentId
+    );
+    if (commentToDelete && commentToDelete.user_id === user.id) {
+      // Check if the comment exists and is created by the logged-in user
+      deleteComment(commentId);
+    } else {
+      console.error("You are not authorized to delete this comment.");
+      // Handle unauthorized deletion (e.g., display an error message).
+    }
+  };
+
+  // Function to edit a comment
   const editComment = (commentId, newText) => {
     const updatedData = {
       content: newText,
     };
-  
+
     patchComment(commentId, updatedData);
   };
-  // Function to delete a comment
-  const removeComment = (commentId) => {
-    deleteComment(commentId);
-  };;
 
   // Function to toggle the comment section visibility for a specific post
   const toggleCommentSection = (postId) => {
@@ -56,9 +110,13 @@ const { posts, postComment, comments, setComments, fetchCommentsByPostId,  delet
   // Function to set the comment being edited
   const startEditComment = (commentId) => {
     const commentToEdit = comments.find((comment) => comment.id === commentId);
-    if (commentToEdit) {
+    if (commentToEdit && commentToEdit.user_id === user.id) {
+      // Check if the comment exists and is created by the logged-in user
       setEditingComment(commentId);
       setEditedCommentText(commentToEdit.content); // Update with the comment content
+    } else {
+      console.error("You are not authorized to edit this comment.");
+      // Handle unauthorized editing (e.g., display an error message).
     }
   };
 
@@ -87,12 +145,46 @@ const { posts, postComment, comments, setComments, fetchCommentsByPostId,  delet
   }, [posts, fetchCommentsByPostId, commentSectionVisibility]);
 
   return (
-    <>
-    <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-
-    <div className="posts-container">
+    <div className="posts-container" style={{ backgroundColor: "#333" }}>
+      <button
+        onClick={() => toggleCommentSection("new")}
+        className="add-post-button"
+      >
+        <FaPlus /> Add New Post
+      </button>
+      <NewPostForm
+        isOpen={commentSectionVisibility["new"]}
+        onCancel={() => toggleCommentSection("new")}
+      />
       {posts.map((post) => (
         <div key={post.id} className="post">
+          {/* Display the post's author */}
+          <p>Author: {post.user ? post.user.username : "Unknown"}</p>
+          {/* Edit and Delete buttons for each post */}
+          {editingPost === post.id ? (
+            <>
+              <textarea
+                value={editedPostText}
+                onChange={(e) => setEditedPostText(e.target.value)}
+              />
+              <button
+                onClick={() => saveEditedPost(post.id, editedPostText)}
+                style={{ backgroundColor: "#142e60", color: "#fff" }}
+              >
+                Save
+              </button>
+              <button onClick={() => cancelEditPost()} style={{ backgroundColor: "#142e60", color: "#fff" }}>
+                Cancel
+              </button>
+            </>
+          ) : (
+            <>
+              <button onClick={() => startEditPost(post.id)} style={{ backgroundColor: "#142e60", color: "#fff" }}>
+                Edit
+              </button>
+              {/* Other content of the post */}
+            </>
+          )}
           <h2>{post.title}</h2>
           <p>{post.content}</p>
           <Link to={post.link} target="_blank">
@@ -101,26 +193,30 @@ const { posts, postComment, comments, setComments, fetchCommentsByPostId,  delet
 
           {/* Comment section */}
           <div className="comment-section">
-            
-            
             {/* Button to toggle comment section */}
             <button
               onClick={() => toggleCommentSection(post.id)}
               className="comment-toggle-button"
+              style={{ backgroundColor: "#142e60", color: "#fff" }}
             >
-              {commentSectionVisibility[post.id] ? "Hide Comments" : "Comments"}
+              {commentSectionVisibility[post.id]
+                ? "Hide Comments"
+                : "Comments"}
             </button>
-            
+
             {/* Show comments only if the comment section is visible */}
             {commentSectionVisibility[post.id] && (
-              
               <ul>
                 {comments
-                  .filter((comment) => comment.post_id === post.id) // Use 'post_id' to filter comments
+                  .filter((comment) => comment.post_id === post.id)
                   .map((comment) => (
                     <li key={comment.id} className="comment">
+                      {/* Display the comment's author */}
+                      <p>
+                        Author:{" "}
+                        {comment.user ? comment.user.username : "Unknown"}
+                      </p>
                       <div className="comment-content">
-                      
                         {editingComment === comment.id ? (
                           <>
                             <textarea
@@ -128,13 +224,18 @@ const { posts, postComment, comments, setComments, fetchCommentsByPostId,  delet
                               onChange={(e) =>
                                 setEditedCommentText(e.target.value)
                               }
+                              className="comment-input"
                             />
                             <button
-                              onClick={() =>{
-                                saveEditedComment(comment.id, editedCommentText);
+                              onClick={() => {
+                                saveEditedComment(
+                                  comment.id,
+                                  editedCommentText
+                                );
                                 editComment(comment.id, editedCommentText);
-                              }
-                              }
+                              }}
+                              className="comment-button"
+                              style={{ backgroundColor: "#142e60", color: "#fff" }}
                             >
                               Save
                             </button>
@@ -143,17 +244,34 @@ const { posts, postComment, comments, setComments, fetchCommentsByPostId,  delet
                           <p>{comment.content}</p>
                         )}
                         <span className="like-count">
-                          {likes[comment.id] || <FaThumbsUp />}
+                          {likes[comment.id] ? (
+                            <FaThumbsUp style={{ color: "limegreen" }} />
+                          ) : (
+                            <FaThumbsDown style={{ color: "lightblue" }} />
+                          )}
                         </span>
                       </div>
                       <div className="comment-buttons">
-                        <button onClick={() => removeComment(comment.id)}>
+                        <button
+                          onClick={() => removeComment(comment.id)}
+                          style={{ backgroundColor: "#142e60", color: "#fff" }}
+                        >
                           <FaTrash />
                         </button>
-                        <button onClick={() => handleLike(comment.id)}>
-                          {likes[comment.id] ? <FaThumbsUp /> : <FaThumbsDown />}
+                        <button
+                          onClick={() => handleLike(comment.id)}
+                          style={{ backgroundColor: "#142e60", color: "#fff" }}
+                        >
+                          {likes[comment.id] ? (
+                            <FaThumbsUp />
+                          ) : (
+                            <FaThumbsDown />
+                          )}
                         </button>
-                        <button onClick={() => startEditComment(comment.id)}>
+                        <button
+                          onClick={() => startEditComment(comment.id)}
+                          style={{ backgroundColor: "#142e60", color: "#fff" }}
+                        >
                           <FaPencilAlt />
                         </button>
                       </div>
@@ -161,30 +279,6 @@ const { posts, postComment, comments, setComments, fetchCommentsByPostId,  delet
                   ))}
               </ul>
             )}
-            
-
-
-            {/* // Filter the stats based on the searchQuery
-    const filteredStats = stats.filter((stat) => {
-      const query = searchQuery.toLowerCase();
-      const description = stat.description.toLowerCase();
-      return query === "" || description.includes(query);
-    });
-
-    return (
-      <div key={categoryTitle}>
-        <h1 className="title">{categoryTitle}</h1>
-        <div className="stat-card-container">
-          {filteredStats.map((stat) => (
-            <HomeItem key={stat.name} {...stat} />
-          ))}
-        </div>
-      </div>
-    );
-  }; */}
-
-
-
 
             {/* Add a Comment form */}
             {commentSectionVisibility[post.id] && (
@@ -192,25 +286,22 @@ const { posts, postComment, comments, setComments, fetchCommentsByPostId,  delet
                 onSubmit={(e) => {
                   e.preventDefault();
                   const commentText = e.target.commentText.value;
-                  const emailAddress = e.target.emailAddress.value;
-                  const liked = true; // Adjust this based on your logic
-                  addComment(emailAddress, liked, post.id, commentText); // Pass the liked status
+                  const userId = user.id;
+                  addComment(userId, post.id, commentText); // Pass the liked status
                   e.target.commentText.value = ""; // Clear the input field
                 }}
               >
-                <input
-                  type="text"
-                  name="emailAddress"
-                  placeholder="Email Address"
-                  className="comment-input"
-                />
                 <input
                   type="text"
                   name="commentText"
                   placeholder="Add a comment"
                   className="comment-input"
                 />
-                <button type="submit" className="comment-button">
+                <button
+                  type="submit"
+                  className="comment-button"
+                  style={{ backgroundColor: "#142e60", color: "#fff" }}
+                >
                   Add Comment
                 </button>
               </form>
@@ -219,7 +310,6 @@ const { posts, postComment, comments, setComments, fetchCommentsByPostId,  delet
         </div>
       ))}
     </div>
-    </>
   );
 };
 

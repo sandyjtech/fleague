@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaLinkedin } from 'react-icons/fa';
 import './Navbar.css';
 import {  FaRegCopyright } from 'react-icons/fa';
 import Button from '@mui/material/Button';

@@ -2,7 +2,6 @@
 import React, { useContext, useState, useEffect } from "react";
 
 const PostsContext = React.createContext();
-
 export const usePosts = () => {
   return useContext(PostsContext);
 };
@@ -25,7 +24,7 @@ const PostsProvider = ({ children }) => {
         setLoading(false);
       })
       .catch((error) => {
-        console.error("Error fetching blogs:", error);
+        console.error("Error fetching posts:", error);
         setLoading(false); // Set loading to false on error
       });
   }, []);
@@ -46,17 +45,85 @@ const PostsProvider = ({ children }) => {
       // Handle the error gracefully, e.g., display an error message to the user.
     }
   }
-
+//Create Post// Function to create a new post
+  function createPost(postData) {
+    fetch("/api/posts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(postData),
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json(); // Parse the response JSON
+        }
+        throw new Error("Failed to create post");
+      })
+      .then((newPost) => {
+        // Append the new post to the existing posts state
+        setPosts((prevPosts) => [...prevPosts, newPost]);
+      })
+      .catch((error) => {
+        console.error("Error creating post:", error);
+      });
+  }
+  //Delete the post
+  function deletePost(postId) {
+    fetch(`/api/post/${postId}`, {
+      method: "DELETE",
+    })
+      .then((res) => {
+        if (res.ok) {
+          // Remove the deleted post from the posts state
+          setPosts((prevPosts) =>
+            prevPosts.filter((post) => post.id !== postId)
+          );
+        } else {
+          throw new Error("Failed to delete post");
+        }
+      })
+      .catch((error) => {
+        console.error("Error deleting post:", error);
+      });
+  }
+  //Update the post
+  async function updatePost(postId, updatedData) {
+    try {
+      const response = await fetch(`/api/post/${postId}`, {
+        method: "PATCH", // Use the PATCH HTTP method for updating the resource
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedData),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to update post");
+      }
+  
+      const updatedPost = await response.json();
+  
+      // Update the posts state with the updated post
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post.id === updatedPost.id ? updatedPost : post
+        )
+      );
+    } catch (error) {
+      console.error("Error updating post:", error);
+      // Handle the error gracefully, e.g., display an error message to the user.
+    }
+  }
   //Post Comment
-  function postComment(emailAddress, liked, postId, commentText) {
+  function postComment( userId, postId, commentText) {
     fetch("/api/comments", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        email: emailAddress,
-        like: liked, // Include the liked status
+        user_id: userId,      
         post_id: postId,
         content: commentText,
       }),
@@ -135,6 +202,9 @@ const patchComment = async (commentId, updatedData) => {
     deleteComment,
     patchComment,
     fetchCommentsByPostId,
+    createPost,
+    deletePost,
+    updatePost
   };
 
   return (
