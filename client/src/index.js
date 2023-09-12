@@ -8,7 +8,7 @@ import UserAuthProvider from "./context/UserAuthProvider";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
+  
     <Router>
       <UserAuthProvider>
         <PostsProvider>
@@ -16,6 +16,6 @@ root.render(
         </PostsProvider>
       </UserAuthProvider>
     </Router>
-  </React.StrictMode>
+ 
 );
 

@@ -1,18 +1,23 @@
 import React, { useEffect, useState } from "react";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import "./Account.css"; // Import your CSS file
 import PlayerModal from "./PlayerModal";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
+
 const LeagueManagement = ({ user }) => {
   const [players, setPlayers] = useState([]); // All players from the API
   const [filteredPlayers, setFilteredPlayers] = useState([]); // Filtered list based on search query
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedPositions, setSelectedPositions] = useState([]);
-  const maxPlayers = 500; // Maximum players to display
+  const [positionFilteredPlayers, setPositionFilteredPlayers] = useState([]);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
+  const maxPlayers = 500; // Maximum players to display
   const [isSlectedOpen, setSlectedOpen] = useState(false);
   const [page, setPage] = useState(1);
   const pageSize = 50;
+   const [fantasyTeam, setFantasyTeam] = useState([]);
+  const [playerInQueue, setPlayerInQueue] = useState([]);
   const positionDefinitions = {
     LB: "Linebacker",
     DB: "Defensive Back",
@@ -38,9 +43,7 @@ const LeagueManagement = ({ user }) => {
     WR: "Wide Receiver",
     SS: "Strong Safety",
   };
-  const handlePageChange = (newPage) => {
-    setPage(newPage);
-  };
+
   useEffect(() => {
     // Fetch all players from the API initially
     fetch("/api/players")
@@ -56,7 +59,7 @@ const LeagueManagement = ({ user }) => {
         setFilteredPlayers(
           playersData.slice((page - 1) * pageSize, page * pageSize)
         );
-        setSelectedPositions(Object.keys(positionDefinitions));
+        //setSelectedPositions(Object.keys(positionDefinitions));
       })
       .catch((error) => {
         console.error("Fetch error:", error);
@@ -89,95 +92,206 @@ const LeagueManagement = ({ user }) => {
     setFilteredPlayers(filtered.slice(0, maxPlayers));
   };
 
-  // Function to handle checkbox changes
   const handleCheckboxChange = (position) => {
     // Toggle the selected position
     if (selectedPositions.includes(position)) {
       setSelectedPositions(selectedPositions.filter((pos) => pos !== position));
+      // Remove the filtered players for this position
+      setPositionFilteredPlayers((prevState) => {
+        const newState = { ...prevState };
+        delete newState[position];
+        return newState;
+      });
     } else {
       setSelectedPositions([...selectedPositions, position]);
+      // Filter and set the players for this position
+      setPositionFilteredPlayers((prevState) => ({
+        ...prevState,
+        [position]: filteredPlayers.filter(
+          (player) => player.position === position
+        ),
+      }));
     }
   };
+  function handleDragEnd(result) {
+    if (!result.destination) return;
+    const items = Array.from(players);
+    const [reorderedItem] = items.splice(result.source.droppableId, 1);
+    items.splice(result.destination.droppableId, items.length, reorderedItem);
+
+    setPlayerInQueue(items);
+    console.log(items)
+    console.log(reorderedItem)
+  }
 
   return (
     <>
-      <input
-        type="text"
-        placeholder="Search players..."
-        value={searchQuery}
-        onChange={(e) => handleSearch(e.target.value)}
-      />
-      <div>
-        <h2 className="title">Select Positions to Display:</h2>
-        <div className="position-checkboxes">
-          {Object.keys(positionDefinitions).map((position) => (
-            <label key={position}>
-              <input
-                type="checkbox"
-                value={position}
-                checked={selectedPositions.includes(position)}
-                onChange={() => handleCheckboxChange(position)}
-              />
-              {positionDefinitions[position]}
-            </label>
-          ))}
-        </div>
-        {selectedPositions.map((selectedPosition) => (
-  <div key={selectedPosition}>
-            <h2 className="title">{positionDefinitions[selectedPosition]}</h2>
-            <div className="scrollable-row">
-              {filteredPlayers
-                .filter((player) => selectedPositions.includes(player.position))
-                .map((player) => (
-                  <div
-                    key={player.id}
-                    className="player-card"
-                    onClick={() => openModal(player)} // Open modal on click
-                  >
-                    {/* Render player information here */}
-                    <p>{player.first_name}</p>
-                    <p>
-                      {player.last_name} ({player.number})
-                    </p>
-
-                    <p>{player.team}</p>
-                    <p
-                      className={
-                        player.injury_status === "Active" ? "blue" : "red"
-                      }
+      {/******** Added DND ***************/}
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <input
+          type="text"
+          placeholder="Search players..."
+          value={searchQuery}
+          onChange={(e) => handleSearch(e.target.value)}
+        />
+        <Droppable droppableId="filteredPlayers">
+          {(provided) => (
+            <div
+              className="droppable"
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+            >
+              <div>
+                <h2 className="title">Select Positions to Display:</h2>
+                <div className="position-checkboxes">
+                  {Object.keys(positionDefinitions).map((position) => (
+                    <label key={position}>
+                      <input
+                        type="checkbox"
+                        value={position}
+                        checked={selectedPositions.includes(position)}
+                        onChange={() => handleCheckboxChange(position, "queue")}
+                      />
+                      {positionDefinitions[position]}
+                    </label>
+                  ))}
+                </div>
+                <Droppable droppableId="inQueue">
+                  {(provided) => (
+                    <div
+                      className="in-queue"
+                      {...provided.droppableProps}
+                      ref={provided.innerRef}
                     >
-                      {player.injury_status}
-                    </p>
-                    <p className="position">{player.position}</p>
-                    {/* Add more player info as needed */}
+                      <h3>In Queue</h3>
+                      {playerInQueue.map((player, index) => (
+                        <Draggable
+                          key={player.id} // Make sure player.id is unique
+                          draggableId={`player-${player.id}-${index}`} // Create a unique identifier
+                          index={index}
+                        >
+                          {(provided) => (
+                              <div
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                ref={provided.innerRef}
+                                className="player-card"
+                                onClick={() => openModal(player)}
+                              >
+                                <p>{player.first_name}</p>
+                                <p>
+                                  {player.last_name} ({player.number})
+                                </p>
+
+                                <p>{player.team}</p>
+                                <p
+                                  className={
+                                    player.injury_status === "Active"
+                                      ? "blue"
+                                      : "red"
+                                  }
+                                >
+                                  {player.injury_status}
+                                </p>
+                                <p className="position">{player.position}</p>
+                              </div>
+                            )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+                <Droppable droppableId="fantasyTeam">
+                  {(provided) => (
+                    <div
+                      className="fantasy-team"
+                      {...provided.droppableProps}
+                      ref={provided.innerRef}
+                    >
+                      <h3>Fantasy Team</h3>
+                      {fantasyTeam.map((player, index) => (
+                        <Draggable
+                          key={player.id}
+                          draggableId={player.id}
+                          index={index} // Use a separate index for this Droppable
+                        >
+                          {(provided) => (
+                            <div
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              ref={provided.innerRef}
+                              className="player-card"
+                              onClick={() => openModal(player)}
+                            >
+                              {/* Render player information here */}
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+                {selectedPositions.map((selectedPosition) => (
+                  <div key={selectedPosition}>
+                    <h2 className="title">
+                      {positionDefinitions[selectedPosition]}
+                    </h2>
+                    <div className="scrollable-row">
+                      {positionFilteredPlayers[selectedPosition].map(
+                        (player, index) => (
+                          <Draggable
+                            key={player.id}
+                            draggableId={player.id}
+                            index={index}
+                          >
+                            {(provided) => (
+                              <div
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                ref={provided.innerRef}
+                                className="player-card"
+                                onClick={() => openModal(player)}
+                              >
+                                <p>{player.first_name}</p>
+                                <p>
+                                  {player.last_name} ({player.number})
+                                </p>
+
+                                <p>{player.team}</p>
+                                <p
+                                  className={
+                                    player.injury_status === "Active"
+                                      ? "blue"
+                                      : "red"
+                                  }
+                                >
+                                  {player.injury_status}
+                                </p>
+                                <p className="position">{player.position}</p>
+                              </div>
+                            )}
+                          </Draggable>
+                        )
+                      )}
+                      {provided.placeholder}
+                    </div>
                   </div>
                 ))}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
-      {/* Display modal if a player is selected and isSlectedOpen is true */}
-      {selectedPlayer && (
-        <Dialog open={isSlectedOpen} onClose={closeModal}>
-        <DialogContent>
-        <PlayerModal player={selectedPlayer} onClose={closeModal} />
-        </DialogContent>
-      </Dialog>
-      )}
-      <div className="pagination">
-      <button
-        disabled={page === 1}
-        onClick={() => handlePageChange(page - 1)}
-      >
-        Previous
-      </button>
-      <button
-        disabled={page * pageSize >= filteredPlayers.length}
-        onClick={() => handlePageChange(page + 1)}
-      >
-        Next
-      </button>
-    </div> 
+          )}
+        </Droppable>
+
+        {selectedPlayer && (
+          <Dialog open={isSlectedOpen} onClose={closeModal}>
+            <DialogContent>
+              <PlayerModal player={selectedPlayer} onClose={closeModal} />
+            </DialogContent>
+          </Dialog>
+        )}
+      </DragDropContext>
     </>
   );
 };

@@ -194,8 +194,19 @@ class CommentsByPostIdResource(Resource):
 #All NFL Players##################################### 
 class NFLPlayersResource(Resource):
     def get(self):
-        players = [player.to_dict(rules=("-fantasy_positions",)) for player in NFLPlayer.query.all()]
-        return make_response(players, 200)   
+        page = request.args.get('page', default=1, type=int)
+        page_size = request.args.get('pageSize', default=50, type=int)
+        
+        # Calculate offset and limit based on pagination parameters
+        offset = (page - 1) * page_size
+        limit = page_size
+        
+        # Query the database with pagination parameters
+        players = NFLPlayer.query.offset(offset).limit(limit).all()
+        
+        # Return paginated player data as a JSON response
+        return make_response([player.to_dict(rules=("-fantasy_positions",)) for player in players], 200)
+   
 
 class PlayersById(Resource):
     def get(self, id):
