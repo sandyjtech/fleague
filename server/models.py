@@ -98,16 +98,14 @@ class FantasyTeam(db.Model, SerializerMixin):
     __tablename__ = "fantasy_teams"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-    name = db.Column(db.String())
-    
-    # Corrected relationship definition
+    name = db.Column(db.String())      
     team_players = db.relationship("FantasyPlayer", backref="fantasy_team")
     serialize_rules = ("-team_players",)
 
 class FantasyPlayer(db.Model, SerializerMixin):
     __tablename__ = "fantasy_players"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    nfl_player_id = db.Column(db.Integer, db.ForeignKey("nfl_players.id"))
+    nfl_player_id = db.Column(db.String, db.ForeignKey("nfl_players.id"))
     fantasy_team_id = db.Column(db.Integer, db.ForeignKey("fantasy_teams.id"))
     is_benched = db.Column(db.Boolean)
     # Define the relationship explicitly with foreign_keys

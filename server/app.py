@@ -58,6 +58,10 @@ class Authorized(Resource):
             return make_response(user.to_dict(), 200)
         else:
             return make_response({"Error": "User not found"}, 401)
+api.add_resource(Authorized, '/authorized')   
+api.add_resource(Signup, "/signup")
+api.add_resource(Login, "/login")
+api.add_resource(Logout, '/logout')
 #UserDetails###########################################
 class UserDetailsById(Resource):
     def get(self, id):
@@ -65,6 +69,7 @@ class UserDetailsById(Resource):
         if not user:
             raise ValueError("User not found")        
         return make_response(user.to_dict(), 200)
+api.add_resource(UserDetailsById, '/users/<int:id>')
 #Posts#####################################
 class PostResource(Resource):
     def get(self):
@@ -191,6 +196,11 @@ class CommentsByPostIdResource(Resource):
         if not comments:
             return make_response({"error": "Comments not found for this post"}, 404)
         return make_response([comment.to_dict() for comment in comments], 200)
+api.add_resource(PostResource, '/api/posts')
+api.add_resource(PostResourceById, '/api/post/<int:id>')
+api.add_resource(CommentResource, '/api/comments')
+api.add_resource(CommentByIDResource, '/api/comments/<int:id>')
+api.add_resource(CommentsByPostIdResource, '/api/post-comment/<int:post_id>')
 #All NFL Players##################################### 
 class NFLPlayersResource(Resource):
     def get(self):
@@ -205,8 +215,7 @@ class NFLPlayersResource(Resource):
         players = NFLPlayer.query.offset(offset).limit(limit).all()
         
         # Return paginated player data as a JSON response
-        return make_response([player.to_dict(rules=("-fantasy_positions",)) for player in players], 200)
-   
+        return make_response([player.to_dict(rules=("-fantasy_positions",)) for player in players], 200)  
 
 class PlayersById(Resource):
     def get(self, id):
@@ -214,19 +223,88 @@ class PlayersById(Resource):
         if not player:
             raise ValueError("Could not find pet")
         return make_response(player.to_dict(), 200)    
-
-# Add API resources to the API
-api.add_resource(Authorized, '/authorized')   
-api.add_resource(Signup, "/signup")
-api.add_resource(Login, "/login")
-api.add_resource(Logout, '/logout')
-api.add_resource(UserDetailsById, '/users/<int:id>')
 api.add_resource(PlayersById, '/api/players/<int:id>', endpoint='api/players/<int:id>')
-api.add_resource(PostResource, '/api/posts')
-api.add_resource(PostResourceById, '/api/post/<int:id>')
-api.add_resource(CommentResource, '/api/comments')
-api.add_resource(CommentByIDResource, '/api/comments/<int:id>')
-api.add_resource(CommentsByPostIdResource, '/api/post-comment/<int:post_id>')
-api.add_resource(NFLPlayersResource, '/api/players')
+
+#Create myu Fantasy Players and Fantasy Team
+class FantasyPlayersResource(Resource):
+    def get(self):
+        players = [p.to_dict() for p in FantasyPlayer.query.all()]
+        return make_response(players, 200)
+
+    def post(self):
+        data = request.get_json()
+
+        # Validate the data
+        if "nfl_player_id" not in data or "fantasy_team_id" not in data or "is_benched" not in data:
+            return make_response({"errors": ["Missing required fields"]}, 400)
+       
+        try:
+            new_player = FantasyPlayer(**data)
+            db.session.add(new_player)
+            db.session.commit()
+            return make_response(new_player.to_dict(rules=("-performances",)), 200)
+        except Exception as e:
+            return make_response({"errors": [str(e)]}, 400)
+class FantasyPlayerByID(Resource):
+    def get(self, id):
+        player = FantasyPlayer.query.filter_by(id=id).first()
+        if not player:
+            raise ValueError("Could not find pet")
+        return make_response(player.to_dict(), 200)    
+api.add_resource(FantasyPlayerByID, "/api/fantasy_players/<int:id>")
+
+class PlayerPerformanceByNflId(Resource):
+    def get(self, nfl_player_id):
+        # Query the database to get the FantasyPlayer by nfl_player_id
+        player = FantasyPlayer.query.filter_by(nfl_player_id=nfl_player_id).first()
+
+        if not player:
+            return make_response({"error": "Player not found"}, 404)
+
+        # Query the database to get the performances of the player
+        performances = PlayerPerformance.query.filter_by(fantasy_player_id=player.id).all()
+
+        return make_response({
+            "player": player.to_dict(),
+            "performances": [performance.to_dict() for performance in performances]
+        }, 200)     
+api.add_resource(PlayerPerformanceByNflId, '/api/player_by_nfl_id/<string:nfl_player_id>')  
+     
+class FantasyTeamResource(Resource):
+    def get(self):
+        teams = [t.to_dict() for t in FantasyTeam.query.all()]
+        return make_response(teams, 200)
+    def post(self):
+        data = request.get_json()
+        try:
+            new_team = FantasyTeam(**data)
+        except:
+            return make_response({"errors" : ["validations errors"]}, 400)
+        db.session.add(new_team)
+        db.session.commit()
+        return make_response(new_team.to_dict(rules=("-team_players",)), 200)
+api.add_resource(FantasyTeamResource, "/api/fantasy_teams")       
+api.add_resource(FantasyPlayersResource, "/api/fantasy_players") 
+api.add_resource(NFLPlayersResource, '/api/players')       
+
+class FantasyPlayersByUserIDResource(Resource):
+     def get(self, user_id):
+        players = FantasyPlayer.query.filter_by(user_id=user_id).all()
+        if not players:
+            return make_response({"error": "Comments not found for this post"}, 404)
+        return make_response([player.to_dict() for player in players], 200)
+api.add_resource(FantasyPlayersByUserIDResource, "/api/player_by_userid/<int:user_id>")
+
+##Player Scores
+class PlayerPerformancesByPlayerId(Resource):
+    def get(self, player_id):
+        scores = PlayerPerformance.query.filter_by(fantasy_player_id=player_id).all()
+        if not scores:
+            return make_response({"error": "Comments not found for this post"}, 404)
+        return make_response([scores.to_dict() for scores in scores], 200)
+api.add_resource(PlayerPerformancesByPlayerId, "/api/player_performances/<int:player_id>")
+
+
+
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
