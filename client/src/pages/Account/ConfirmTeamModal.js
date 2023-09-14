@@ -46,38 +46,27 @@ const ConfirmTeamModal = ({ players, onClose, user }) => {
 
         // Prepare and send data for the players
         const playersData = fantasyPlayers.map((player) => ({
-          nfl_player_id: player.id,
-          fantasy_team_id: team.id,
-          is_benched: player.isBenched, // Use the isBenched state from the player object
-        }));
-        console.log(teamData);
-        console.log(playersData);
-
-        // Send a POST request to create the players
-        fetch("/api/fantasy_players", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(playersData),
-        })
-          .then((response) => {
-            if (!response.ok) {
-              console.error(`HTTP error! Status: ${response.status}`);
-              response.json().then((data) => {
-                console.error("Response body:", data);
-              });
-              throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json(); 
+            nfl_player_id: player.id,
+            fantasy_team_id: team.id,
+            is_benched: player.isBenched,
+          }));
+          
+          // Send a POST request to create the players
+          console.log("Request URL:", "/api/fantasy_players"); // Log the request URL
+          fetch("/api/fantasy_players", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(playersData),
           })
-          .then((data) => {
-            console.log("Players created:", data);
-            onClose();
-          })
-          .catch((error) => {
-            console.error("Error creating players:", error);
-          });
+            .then((data) => {
+              console.log("Players created:", data);
+              onClose();
+            })
+            .catch((error) => {
+              console.error("Error creating players:", error);
+            });
       })
       .catch((error) => {
         console.error("Error creating team:", error);

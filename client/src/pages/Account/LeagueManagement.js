@@ -45,10 +45,12 @@ const onDragEnd = (result, columns, setColumns) => {
 
 const LeagueManagement = ({ user }) => {
   const [players, setPlayers] = useState([]);
+  const pageSize = 20;
   //State for creating of teams
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPlayers, setSelectedPlayers] = useState([]);
-  
+  const [searchQuery, setSearchQuery] = useState("");
+
 
   //Fetch from backend
   useEffect(() => {
@@ -71,8 +73,14 @@ const LeagueManagement = ({ user }) => {
             ...columns[Object.keys(columns)[0]],
             items: playersData.map((player) => ({
               id: uuid(),
-              content: `${player.first_name} ${player.last_name}`, // Modify this as needed
-              playerData: player, // You can store the entire player data if needed
+              content: (
+                <div>
+                  <div style={{}}>{player.first_name} {player.last_name} ({player.position})</div>
+                  <div style={{color: 'lightblue'}}>Team: {player.team}</div>
+                  <div style={{ color: player.status === 'active' ? 'red' : 'green' }}>Status: {player.status}</div>
+                </div>
+              ),
+              playerData: player,
             })),
           },
         });
@@ -104,9 +112,50 @@ const LeagueManagement = ({ user }) => {
   };
   const [columns, setColumns] = useState(initialColumns);
 
+  const handleSearchInputChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+  useEffect(() => {
+    if (searchQuery) {
+      // Fetch players based on the search query
+      fetch(`/api/players/search?query=${searchQuery}`)
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error(`HTTP error! Status: ${res.status}`);
+          }
+          return res.json();
+        })
+        .then((playersData) => {
+          // Update the "All Players" column items with search results
+          setColumns({
+            ...columns,
+            [Object.keys(columns)[0]]: {
+              ...columns[Object.keys(columns)[0]],
+              items: playersData.map((player) => ({
+                id: uuid(),
+                content: `${player.first_name} ${player.last_name}`,
+                playerData: player,
+              })),
+            },
+          });
+        })
+        .catch((error) => {
+          console.error("Fetch error:", error);
+        });
+    } else {
+      // If there's no search query what to display?
+    }
+  }, [searchQuery]);
   //console.log(filteredPlayers);
   return (
+    <>  <input
+    type="text"
+    placeholder="Search players..."
+    value={searchQuery}
+    onChange={handleSearchInputChange}
+  />
     <div style={{ display: "flex", justifyContent: "center", height: "100%" }}>
+    
       <DragDropContext
         onDragEnd={(result) => onDragEnd(result, columns, setColumns)}
       >
@@ -156,7 +205,7 @@ const LeagueManagement = ({ user }) => {
                                       minHeight: "50px",
                                       backgroundColor: snapshot.isDragging
                                         ? "blue"
-                                        : "pink",
+                                        : "black",
                                       color: "white",
                                       ...provided.draggableProps.style,
                                     }}
@@ -195,6 +244,7 @@ const LeagueManagement = ({ user }) => {
         </Dialog>
       </DragDropContext>
     </div>
+    </>
   );
 };
 

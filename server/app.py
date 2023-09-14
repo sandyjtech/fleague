@@ -5,6 +5,8 @@ from flask import abort, request, session
 from sqlite3 import IntegrityError
 from flask import Flask, make_response, jsonify, request, session
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy import or_
+import random
 
 # Local imports
 from config import app,api, Resource, db
@@ -205,17 +207,41 @@ api.add_resource(CommentsByPostIdResource, '/api/post-comment/<int:post_id>')
 class NFLPlayersResource(Resource):
     def get(self):
         page = request.args.get('page', default=1, type=int)
-        page_size = request.args.get('pageSize', default=50, type=int)
+        page_size = request.args.get('pageSize', default=25, type=int)
         
         # Calculate offset and limit based on pagination parameters
         offset = (page - 1) * page_size
         limit = page_size
         
-        # Query the database with pagination parameters
-        players = NFLPlayer.query.offset(offset).limit(limit).all()
+        # Query all players from the database
+        all_players = NFLPlayer.query.all()
+        
+        # Randomly shuffle the players
+        random.shuffle(all_players)
+        
+        # Get the subset of players based on pagination
+        players_subset = all_players[offset:offset + limit]
         
         # Return paginated player data as a JSON response
-        return make_response([player.to_dict(rules=("-fantasy_positions",)) for player in players], 200)  
+        return make_response([player.to_dict(rules=("-fantasy_positions",)) for player in players_subset], 200)
+     
+#All Players without Pagination adn Search Bar
+class NFLPlayersSearchResource(Resource):
+    def get(self):
+        search_query = request.args.get('query', type=str)
+
+        # Query the database to search for players based on the search query
+        players = NFLPlayer.query.filter(
+            or_(
+                NFLPlayer.first_name.ilike(f"%{search_query}%"),
+                NFLPlayer.last_name.ilike(f"%{search_query}%")
+            )
+        ).all()
+
+        # Return the search results as a JSON response
+        return make_response([player.to_dict(rules=("-fantasy_positions",)) for player in players], 200)
+
+api.add_resource(NFLPlayersSearchResource, '/api/players/search')
 
 class PlayersById(Resource):
     def get(self, id):
@@ -245,13 +271,15 @@ class FantasyPlayersResource(Resource):
             return make_response(new_player.to_dict(rules=("-performances",)), 200)
         except Exception as e:
             return make_response({"errors": [str(e)]}, 400)
+        
+        
 class FantasyPlayerByID(Resource):
     def get(self, id):
         player = FantasyPlayer.query.filter_by(id=id).first()
         if not player:
             raise ValueError("Could not find pet")
         return make_response(player.to_dict(), 200)    
-api.add_resource(FantasyPlayerByID, "/api/fantasy_players/<int:id>")
+api.add_resource(FantasyPlayerByID, '/api/fantasy_players/<int:id>')
 
 class PlayerPerformanceByNflId(Resource):
     def get(self, nfl_player_id):
@@ -283,19 +311,36 @@ class FantasyTeamResource(Resource):
         db.session.add(new_team)
         db.session.commit()
         return make_response(new_team.to_dict(rules=("-team_players",)), 200)
-api.add_resource(FantasyTeamResource, "/api/fantasy_teams")       
-api.add_resource(FantasyPlayersResource, "/api/fantasy_players") 
+api.add_resource(FantasyTeamResource, '/api/fantasy_teams')       
+api.add_resource(FantasyPlayersResource, '/api/fantasy_players') 
 api.add_resource(NFLPlayersResource, '/api/players')       
 
 class FantasyPlayersByUserIDResource(Resource):
-     def get(self, user_id):
-        players = FantasyPlayer.query.filter_by(user_id=user_id).all()
+    def get(self, user_id):
+        players = FantasyPlayer.query.join(FantasyTeam).filter(FantasyTeam.user_id == user_id).all()
         if not players:
-            return make_response({"error": "Comments not found for this post"}, 404)
+            return make_response({"error": "Fantasy players not found for this user"}, 404)
+        
+        # Assuming you have a "to_dict" method defined for the FantasyPlayer model
         return make_response([player.to_dict() for player in players], 200)
+    
 api.add_resource(FantasyPlayersByUserIDResource, "/api/player_by_userid/<int:user_id>")
 
 ##Player Scores
+class PlayerPerformances(Resource):
+    def get(self):
+        scores = [t.to_dict() for t in PlayerPerformance.query.all()]
+        return make_response(scores, 200)
+    def post(self):
+        data = request.get_json()
+        try:
+            new_team = PlayerPerformance(**data)
+        except:
+            return make_response({"errors" : ["validations errors"]}, 400)
+        db.session.add(new_team)
+        db.session.commit()
+        return make_response(new_team.to_dict(rules=("-team_players",)), 200)
+api.add_resource(PlayerPerformances, "/api/player_performances")
 class PlayerPerformancesByPlayerId(Resource):
     def get(self, player_id):
         scores = PlayerPerformance.query.filter_by(fantasy_player_id=player_id).all()
