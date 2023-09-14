@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import "./Posts.css"; // Import the CSS file
-import { FaTrash, FaPencilAlt, FaThumbsUp, FaThumbsDown, FaPlus } from "react-icons/fa"; // Added FaPlus for the "Add New Post" button
+import "./Posts.css";
+import {
+  FaTrash,
+  FaPencilAlt,
+  FaThumbsUp,
+  FaThumbsDown,
+  FaPlus,
+} from "react-icons/fa"; 
 import { usePosts } from "../../context/PostsContext";
 import NewPostForm from "./NewPostForm";
 import { useUserAuth } from "../../context/UserAuthProvider";
@@ -16,13 +22,11 @@ const Posts = () => {
     deleteComment,
     patchComment,
     updatePost,
+    createPost,
     deletePost,
   } = usePosts();
   const { user } = useUserAuth();
-  // State for managing likes
   const [likes, setLikes] = useState({});
-
-  // State to track the visibility of the comment section for each post
   const [commentSectionVisibility, setCommentSectionVisibility] = useState({});
 
   // State to track the comment being edited
@@ -31,7 +35,7 @@ const Posts = () => {
   const [editingPost, setEditingPost] = useState(null);
   const [editedPostText, setEditedPostText] = useState("");
   const [isAddingNewPost, setIsAddingNewPost] = useState(false);
-const toggleNewPostForm = () => {
+  const toggleNewPostForm = () => {
     setIsAddingNewPost(!isAddingNewPost);
   };
   // Function to start editing a post
@@ -48,11 +52,7 @@ const toggleNewPostForm = () => {
 
   // Function to save the edited post
   const saveEditedPost = (postId, newText) => {
-    // Assuming you have a function to update posts in your context, you should call it here.
-    // Replace 'updatePost' with your actual function.
-    updatePost(postId, { content: newText }); // Assuming you have a function to update posts
-
-    // After saving the edited post, clear the editing state
+    updatePost(postId, { content: newText });
     setEditingPost(null);
     setEditedPostText("");
   };
@@ -70,7 +70,6 @@ const toggleNewPostForm = () => {
 
   // Function to handle liking a comment
   const handleLike = (commentId) => {
-    // Toggle like status for the given comment
     const newLikes = { ...likes };
     newLikes[commentId] = !newLikes[commentId];
     setLikes(newLikes);
@@ -82,11 +81,9 @@ const toggleNewPostForm = () => {
       (comment) => comment.id === commentId
     );
     if (commentToDelete && commentToDelete.user_id === user.id) {
-      // Check if the comment exists and is created by the logged-in user
       deleteComment(commentId);
     } else {
       console.error("You are not authorized to delete this comment.");
-      // Handle unauthorized deletion (e.g., display an error message).
     }
   };
 
@@ -147,14 +144,15 @@ const toggleNewPostForm = () => {
   return (
     <div className="posts-container" style={{ backgroundColor: "#333" }}>
       <button
-        onClick={() => toggleCommentSection("new")}
+        onClick={() => toggleNewPostForm()} 
         className="add-post-button"
       >
         <FaPlus /> Add New Post
       </button>
       <NewPostForm
-        isOpen={commentSectionVisibility["new"]}
-        onCancel={() => toggleCommentSection("new")}
+        isOpen={isAddingNewPost} 
+        onCancel={() => toggleNewPostForm()} 
+        onAdd={() => createPost} 
       />
       {posts.map((post) => (
         <div key={post.id} className="post">
@@ -173,16 +171,25 @@ const toggleNewPostForm = () => {
               >
                 Save
               </button>
-              <button onClick={() => cancelEditPost()} style={{ backgroundColor: "#142e60", color: "#fff" }}>
+              <button
+                onClick={() => cancelEditPost()}
+                style={{ backgroundColor: "#142e60", color: "#fff" }}
+              >
                 Cancel
               </button>
             </>
           ) : (
             <>
-              <button onClick={() => startEditPost(post.id)} style={{ backgroundColor: "#142e60", color: "#fff" }}>
+              <button
+                onClick={() => startEditPost(post.id)}
+                style={{ backgroundColor: "#142e60", color: "#fff" }}
+              >
                 Edit
               </button>
-              {/* Other content of the post */}
+              <button
+                onClick={() => deletePost(post.id)}
+                style={{ backgroundColor: "#142e60", color: "#fff" }}
+              ></button>
             </>
           )}
           <h2>{post.title}</h2>
@@ -199,9 +206,7 @@ const toggleNewPostForm = () => {
               className="comment-toggle-button"
               style={{ backgroundColor: "#142e60", color: "#fff" }}
             >
-              {commentSectionVisibility[post.id]
-                ? "Hide Comments"
-                : "Comments"}
+              {commentSectionVisibility[post.id] ? "Hide Comments" : "Comments"}
             </button>
 
             {/* Show comments only if the comment section is visible */}
@@ -212,10 +217,7 @@ const toggleNewPostForm = () => {
                   .map((comment) => (
                     <li key={comment.id} className="comment">
                       {/* Display the comment's author */}
-                      <p>
-                        Author:{" "}
-                        {comment.user ? comment.user.username : "Unknown"}
-                      </p>
+                      <p>Author: {comment.user.username}</p>
                       <div className="comment-content">
                         {editingComment === comment.id ? (
                           <>
@@ -235,7 +237,10 @@ const toggleNewPostForm = () => {
                                 editComment(comment.id, editedCommentText);
                               }}
                               className="comment-button"
-                              style={{ backgroundColor: "#142e60", color: "#fff" }}
+                              style={{
+                                backgroundColor: "#142e60",
+                                color: "#fff",
+                              }}
                             >
                               Save
                             </button>

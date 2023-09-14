@@ -108,14 +108,14 @@ class FantasyPlayer(db.Model, SerializerMixin):
     nfl_player_id = db.Column(db.String, db.ForeignKey("nfl_players.id"))
     fantasy_team_id = db.Column(db.Integer, db.ForeignKey("fantasy_teams.id"))
     is_benched = db.Column(db.Boolean)
-    # Define the relationship explicitly with foreign_keys
-    performances = db.relationship("PlayerPerformance",
-                                   foreign_keys="PlayerPerformance.fantasy_player_id",
-                                   backref="fantasy_player")
     
-    s_points = association_proxy("performances", "standard_point")
-    p_points = association_proxy("performances", "ppr_points")    
-    serialize_rules = ("-performances",)
+    performances = db.relationship(
+        "PlayerPerformance",
+        primaryjoin="FantasyPlayer.id == PlayerPerformance.fantasy_player_id",
+        backref="fantasy_player"
+    )
+ 
+    serialize_rules = ("-performances.fantasy_player",)
 
 class PlayerPerformance(db.Model, SerializerMixin):
     __tablename__ = "player_performances"
@@ -150,9 +150,9 @@ class NFLPlayer(db.Model, SerializerMixin):
     # Add columns for additional fields from the API response
     hashtag = db.Column(db.String, nullable=True)
     # Add other fields as needed
-
+    f_players = db.relationship("FantasyPlayer", backref="nfl_player")
     fantasy_positions = db.relationship("NFLPlayerFantasyPosition", backref="nfl_player")
-    serialize_rules = ("-fantasy_positions",)
+    serialize_rules = ("-fantasy_positions", "-f_players.nfl_player",)
     
 class NFLPlayerFantasyPosition(db.Model, SerializerMixin):
     __tablename__ = "nfl_player_fantasy_positions"

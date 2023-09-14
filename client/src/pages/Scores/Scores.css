@@ -1,2 +1,36 @@
-/* Projects.css */
-
+/* Scores.css */
+.my-scores-container {
+    text-align: center;
+    margin: 20px auto;
+    max-width: 800px;
+    padding: 20px;
+  }
+  
+  .input-container {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+  }
+  
+  .scores-table {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .team-column, .opponent-column {
+    flex-basis: 45%; /* Adjust the column width as needed */
+  }
+  
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  li {
+    margin-bottom: 10px;
+    padding: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  /* Add more styles as needed for your specific design */
+  

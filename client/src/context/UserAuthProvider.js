@@ -16,7 +16,7 @@ const UserAuthProvider = ({ children }) => {
     try {
       // Determine the endpoint based on authType
       const endpoint = authType === 'signup' ? '/signup' : '/login';
-
+  
       const response = await fetch(`${endpoint}`, {
         method: 'POST',
         headers: {
@@ -24,17 +24,22 @@ const UserAuthProvider = ({ children }) => {
         },
         body: JSON.stringify(values),
       });
-      //console.log(endpoint)
+  
       if (response.ok) {
         const userData = await response.json();
         setUser(userData);
       } else {
-        setError('Authentication error'); 
+        const errorData = await response.json();
+        if (response.status === 401) {
+          setError('Bad credentials'); // Set a specific message for bad credentials
+        } else {
+          setError(errorData.message); // Set the general error message from the server
+        }
+        actions.resetForm(); // Reset the form state on error
       }
     } catch (error) {
       setError('An error occurred');
     }
-    
   };
 
   const checkAuthorized = async () => {

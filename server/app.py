@@ -7,6 +7,7 @@ from flask import Flask, make_response, jsonify, request, session
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import or_
 import random
+import logging
 
 # Local imports
 from config import app,api, Resource, db
@@ -259,26 +260,29 @@ class FantasyPlayersResource(Resource):
 
     def post(self):
         data = request.get_json()
-
-        # Validate the data
-        if "nfl_player_id" not in data or "fantasy_team_id" not in data or "is_benched" not in data:
-            return make_response({"errors": ["Missing required fields"]}, 400)
-       
         try:
             new_player = FantasyPlayer(**data)
             db.session.add(new_player)
             db.session.commit()
             return make_response(new_player.to_dict(rules=("-performances",)), 200)
         except Exception as e:
+            logging.error(f"Error in post method: {str(e)}")
             return make_response({"errors": [str(e)]}, 400)
         
-        
+api.add_resource(FantasyPlayersResource, '/api/fantasy_players')        
 class FantasyPlayerByID(Resource):
     def get(self, id):
         player = FantasyPlayer.query.filter_by(id=id).first()
         if not player:
             raise ValueError("Could not find pet")
-        return make_response(player.to_dict(), 200)    
+        return make_response(player.to_dict(), 200)
+    def delete(self, id):
+        player = FantasyPlayer.query.filter_by(id=id).first()
+        if not player:
+            return make_response({"error": "Comment not found"}, 404)
+        db.session.delete(player)
+        db.session.commit()
+        return make_response("", 204)    
 api.add_resource(FantasyPlayerByID, '/api/fantasy_players/<int:id>')
 
 class PlayerPerformanceByNflId(Resource):
@@ -312,18 +316,62 @@ class FantasyTeamResource(Resource):
         db.session.commit()
         return make_response(new_team.to_dict(rules=("-team_players",)), 200)
 api.add_resource(FantasyTeamResource, '/api/fantasy_teams')       
-api.add_resource(FantasyPlayersResource, '/api/fantasy_players') 
+
 api.add_resource(NFLPlayersResource, '/api/players')       
 
+class FantasyTeamById(Resource):
+    def delete(self, id):
+        team = FantasyTeam.query.filter_by(id=id).first()
+        if not team:
+            return make_response({"error": "Comment not found"}, 404)
+        db.session.delete(team)
+        db.session.commit()
+        return make_response("", 204) 
+api.add_resource(FantasyTeamById, '/api/fantasy_teams/<int:id>')
+   
 class FantasyPlayersByUserIDResource(Resource):
+    
     def get(self, user_id):
-        players = FantasyPlayer.query.join(FantasyTeam).filter(FantasyTeam.user_id == user_id).all()
+        team = FantasyTeam.query.filter_by(user_id=user_id).first()
+    
+        if not team:
+                return make_response({"error": "Fantasy team not found for this user"}, 404)
+
+        # Get the team name
+        team_name = team.name
+
+        players = FantasyPlayer.query\
+            .join(FantasyTeam)\
+            .filter(FantasyTeam.user_id == user_id)\
+            .all()
+        
         if not players:
             return make_response({"error": "Fantasy players not found for this user"}, 404)
-        
-        # Assuming you have a "to_dict" method defined for the FantasyPlayer model
-        return make_response([player.to_dict() for player in players], 200)
-    
+
+        # Create a list to store player details
+        player_details = []
+
+        for player in players:
+            nfl_player = player.nfl_player
+
+            player_detail = {
+                'fantasy_player_id': player.id,
+                'nfl_player_id': nfl_player.id,
+                'first_name': nfl_player.first_name,
+                'last_name': nfl_player.last_name,
+                'team': nfl_player.team,
+                'position': nfl_player.position,                
+            }
+            
+            player_details.append(player_detail)
+
+        # Include the team name in the response
+        response_data = {
+            'team_name': team_name,
+            'players': player_details,
+        }
+
+        return make_response(response_data, 200)
 api.add_resource(FantasyPlayersByUserIDResource, "/api/player_by_userid/<int:user_id>")
 
 ##Player Scores
@@ -348,8 +396,6 @@ class PlayerPerformancesByPlayerId(Resource):
             return make_response({"error": "Comments not found for this post"}, 404)
         return make_response([scores.to_dict() for scores in scores], 200)
 api.add_resource(PlayerPerformancesByPlayerId, "/api/player_performances/<int:player_id>")
-
-
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
