@@ -1,4 +1,11 @@
-
+body {
+    background-color: #d3cdcd;
+    margin: 0 10%;
+  
+}
+input#search{
+    background-color: whitesmoke; 
+}
 .news-container {   
   text-align: center;
   overflow: hidden;
@@ -33,15 +40,44 @@ div .news-section{
 }
 
 /* Styles for each news section */
-.news-section {  
-  flex: 0 0 auto; 
+.news-section {
+  flex: 0 0 calc(33.33% - 20px);
   border-radius: 8px;
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
-  margin: 0 3%; 
+  margin: 0 10px;
   position: relative;
-  cursor: pointer; 
+  cursor: pointer;
   overflow: hidden;
-  font-family: 'Roboto Slab', serif; 
+  font-family: 'Roboto Slab', serif;
+  display: flex;
+  flex-direction: column; 
+}
+div.news-section {
+  background-color: whitesmoke;
+}
+/* Styles for the news image */
+.news-section img {
+  max-width: 100%;
+  height: auto;
+  object-fit: cover; 
+}
+
+/* Styles for the news headline */
+.news-section h1 {
+  padding: 10px;
+  font-size: 20px; 
+  color: #142e60; 
+  white-space: break-spaces; 
+}
+
+/* Styles for the news description */
+.news-section p {
+  padding: 10px;
+  font-size: 16px; 
+  color: #333; 
+  white-space: break-spaces; 
+  overflow: hidden;
+  text-overflow: ellipsis; 
 }
 
 

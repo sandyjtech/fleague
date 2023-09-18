@@ -1,31 +1,29 @@
-import React, {useState} from 'react'
-import Signup from './Signup'
-import SignIn from './SignIn'
-import './Navbar.css';
-import { styled} from '@mui/material/styles';
-import Button from '@mui/material/Button';
-import { useUserAuth  } from "../context/UserAuthProvider";
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
+import React, { useState } from "react";
+import Signup from "./Signup";
+import SignIn from "./SignIn";
+import "./Navbar.css";
+import { styled } from "@mui/material/styles";
+import Button from "@mui/material/Button";
+import { useUserAuth } from "../context/UserAuthProvider";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import "./Header.css";
 
 const StyledButton = styled(Button)(({ theme }) => ({
-  backgroundColor: 'black', // Green pastel color
+  backgroundColor: "black",
   color: theme.palette.common.white,
   borderRadius: "15%",
   margin: "5px",
-  '&:hover': {
-    backgroundColor: '#7bc68c', // Slightly darker shade on hover
-  },
 }));
 
 const Header = () => {
   const [isLoginModalOpen, setLoginModalOpen] = useState(false);
   const [isSignupModalOpen, setSignupModalOpen] = useState(false);
-  const { user, handleLogout } = useUserAuth() ;
+  const { user, handleLogout } = useUserAuth();
 
   const handleLoginModalOpen = () => {
     setLoginModalOpen(true);
+    setSignupModalOpen(false); // Close the Signup modal when opening Sign In
   };
 
   const handleLoginModalClose = () => {
@@ -34,45 +32,51 @@ const Header = () => {
 
   const handleSignupModalOpen = () => {
     setSignupModalOpen(true);
+    setLoginModalOpen(false); // Close the Sign In modal when opening Signup
   };
 
   const handleSignupModalClose = () => {
     setSignupModalOpen(false);
   };
-  
-  return (
-    <div>
-      <div className="logo">NFLeague</div>
-      <div>
-            {user ? (
-              <StyledButton variant="outlined" onClick={handleLogout}>
-                Logout
-              </StyledButton>
-            ) : (
-              <>
-                <StyledButton variant="outlined" onClick={handleLoginModalOpen}>
-                  Login
-                </StyledButton>
-                <StyledButton variant="outlined" onClick={handleSignupModalOpen}>
-                  Signup
-                </StyledButton>
-                <Dialog open={isLoginModalOpen} onClose={handleLoginModalClose}>
-                  <DialogTitle>Login</DialogTitle>
-                  <DialogContent>
-                    <SignIn onLogin={() => handleLoginModalClose()} />
-                  </DialogContent>
-                </Dialog>
-                <Dialog open={isSignupModalOpen} onClose={handleSignupModalClose}>
-                  <DialogTitle>Signup</DialogTitle>
-                  <DialogContent>
-                    <Signup />
-                  </DialogContent>
-                </Dialog>
-              </>
-            )}
-          </div>      
-    </div>
-  )
-}
 
-export default Header
+  return (
+    <div className="header">
+      <div className="logo">
+        <img
+          src={require("../football.png")}
+          alt="Logo"
+          className="logo-image"
+        />
+        NFLeague
+      </div>
+      <div className="header-buttons">
+        {user ? (
+          <StyledButton variant="outlined" onClick={handleLogout}>
+            Logout
+          </StyledButton>
+        ) : (
+          <>
+            <StyledButton variant="outlined" onClick={handleLoginModalOpen}>
+              Login
+            </StyledButton>
+            <StyledButton variant="outlined" onClick={handleSignupModalOpen}>
+              Signup
+            </StyledButton>
+            <Dialog open={isLoginModalOpen} onClose={handleLoginModalClose}>
+              <DialogContent>
+                <SignIn toggleSignupModal={handleSignupModalOpen} />
+              </DialogContent>
+            </Dialog>
+            <Dialog open={isSignupModalOpen} onClose={handleSignupModalClose}>
+              <DialogContent>
+                <Signup toggleSignInModal={handleLoginModalOpen} />
+              </DialogContent>
+            </Dialog>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Header;

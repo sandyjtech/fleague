@@ -208,7 +208,7 @@ api.add_resource(CommentsByPostIdResource, '/api/post-comment/<int:post_id>')
 class NFLPlayersResource(Resource):
     def get(self):
         page = request.args.get('page', default=1, type=int)
-        page_size = request.args.get('pageSize', default=25, type=int)
+        page_size = request.args.get('pageSize', default=10, type=int)
         
         # Calculate offset and limit based on pagination parameters
         offset = (page - 1) * page_size

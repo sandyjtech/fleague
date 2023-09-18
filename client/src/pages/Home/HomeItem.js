@@ -1,23 +1,22 @@
 import React from 'react';
-import './Home.css'; 
+import './Home.css';
 
 const HomeItem = ({ displayName, description, value, abbreviation, rankDisplayValue }) => {
   return (
     <div className="stat-card">
-      <h2>{displayName}</h2>
-      <p>{description}</p>
+      <h2 className="title">{displayName}</h2>
       <div className="stat-details">
         <div className="stat-item">
-          <span>Value:</span>
-          <span>{value}</span>
+          <p className="description">{description}:<span className="value">{value}</span></p>
+          
         </div>
         <div className="stat-item">
-          <span>Abbreviation:</span>
-          <span>{abbreviation}</span>
+          <span className="label">Abbreviation: </span>
+          <span className="abbreviation">{abbreviation}</span>
         </div>
         <div className="stat-item">
-          <span>Rank:</span>
-          <span>{rankDisplayValue}</span>
+          <span className="label">Rank: </span>
+          <span className="rank">{rankDisplayValue}</span>
         </div>
       </div>
     </div>

@@ -2,36 +2,51 @@ import React, { useState } from 'react';
 import './Message.css';
 import DirectMessage from './DirectMessage';
 import LeagueChat from './LeagueChat';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import ForumIcon from '@mui/icons-material/Forum';
+import ChatIcon from '@mui/icons-material/Chat';
 
 const Message = () => {
   // State to manage which tab is active
-  const [activeTab, setActiveTab] = useState('call');
+  const [activeTab, setActiveTab] = useState(0);
 
-  // Function to handle tab click
-  const handleTabClick = (tab) => {
-    setActiveTab(tab);
+  // Function to handle tab change
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
   };
 
   return (
-    <div className="message-container">
-      <div className="tab-buttons">
-        <button
-          className={activeTab === 'call' ? 'active-tab' : ''}
-          onClick={() => handleTabClick('call')}
+    <div className="message-container content">
+      <div className="centered-tab-buttons"> {/* Added class */}
+        <Tabs
+          textColor="black"
+          value={activeTab}
+          onChange={handleTabChange}
+          aria-label="icon label tabs example"
+          sx={{
+            '& .MuiTab-textColorInherit.Mui-selected': {
+              color: '#142e60',
+              '&:hover': {
+                color: '#4caf50',
+              },
+            },
+            '& .MuiTab-root': {
+              color: 'black',
+              fontFamily: 'Roboto Slab, serif',
+            },
+            '& .MuiTabs-indicator': {
+              backgroundColor: '#4caf50',
+            },
+          }}
         >
-          Direct Message
-        </button>
-        <button
-          className={activeTab === 'chat' ? 'active-tab' : ''}
-          onClick={() => handleTabClick('chat')}
-        >
-          League Chat
-        </button>
+          <Tab icon={<ForumIcon />} label="Direct Message" />
+          <Tab icon={<ChatIcon />} label="League Chat" />
+        </Tabs>
       </div>
       <div className="tab-content">
-        {/* Conditional rendering of components */}
-        {activeTab === 'call' && <DirectMessage />}
-        {activeTab === 'chat' && <LeagueChat/>}
+        {activeTab === 0 && <DirectMessage />}
+        {activeTab === 1 && <LeagueChat />}
       </div>
     </div>
   );

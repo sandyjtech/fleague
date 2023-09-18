@@ -1,0 +1,64 @@
+/* UnauthorizedAccess.css */
+
+/* Add a background image for the football field */
+.unauthorized-access {
+  background-image: url('./football-field.png'); 
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 100vh; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  font-size: x-large;
+  color: rgb(248, 248, 248);
+  text-shadow: 2px 2px 4px rgb(46, 19, 1);
+}
+
+/* Animation for the football player */
+@keyframes kickBall {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-50vh) translateX(50vw) rotate(180deg);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-100vh) translateX(100vw) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.football-player {
+  width: 100px;
+  height: 100px;
+  background-image: url('./football.png'); 
+  background-size: contain;
+  background-repeat: no-repeat;
+  animation: kickBall 4s ease forwards;  
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 3;
+}
+
+/* Styles for the text */
+.text-container {
+  text-align: center;
+   
+}
+
+.text-container h2 {
+  
+  font-size: 36px; 
+  margin-bottom: 10px;
+}
+
+.text-container p {
+  font-size: 24px; 
+  margin-top: 10px;
+}

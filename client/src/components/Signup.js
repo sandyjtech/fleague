@@ -3,26 +3,32 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useUserAuth } from "../context/UserAuthProvider";
 import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff"; // Import VisibilityOff icon
 
-function Signup() {
+function Signup({ toggleSignInModal }) {
   const { signUp, handleAuthSubmit, handleClick, error } = useUserAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
 
   return (
     <div>
       {error && <p style={{ color: "red" }}>{error}</p>}
       <h2>Please Sign Up!</h2>
-      <p>
-        Already a member? <span onClick={handleClick}>Log In!</span>
-      </p>
+
       <Formik
         initialValues={{
           username: "",
           email: "",
           password: "",
-          confirmPassword: "",         
+          confirmPassword: "",
         }}
         validationSchema={Yup.object({
           username: Yup.string().required("Username is required"),
@@ -42,8 +48,7 @@ function Signup() {
             ? Yup.string()
                 .oneOf([Yup.ref("password"), null], "Passwords must match")
                 .required("Confirm Password is required")
-            : Yup.string(),        
-         
+            : Yup.string(),
           space: Yup.string(),
           email: signUp
             ? Yup.string()
@@ -52,7 +57,7 @@ function Signup() {
             : Yup.string(),
         })}
         onSubmit={(values, actions) => {
-          handleAuthSubmit(values, actions, "signup");                   
+          handleAuthSubmit(values, actions, "signup");
         }}
       >
         {({ isSubmitting }) => (
@@ -69,40 +74,88 @@ function Signup() {
             </div>
             <div>
               <label htmlFor="password">Password</label>
-              <Field
-                type={showPassword ? "text" : "password"}
-                id="password"
-                name="password"
-                autoComplete="current-password"
-              />
-              <Visibility
-                onClick={() => setShowPassword(!showPassword)}
-                style={{ cursor: "pointer" }}
-              />
+              <div style={{ position: "relative" }}>
+                <Field
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  name="password"
+                  autoComplete="current-password"
+                />
+                {showPassword ? (
+                  <VisibilityOff
+                    onClick={togglePasswordVisibility}
+                    style={{
+                      cursor: "pointer",
+                      position: "absolute",
+                      right: "10px",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                    }}
+                  />
+                ) : (
+                  <Visibility
+                    onClick={togglePasswordVisibility}
+                    style={{
+                      cursor: "pointer",
+                      position: "absolute",
+                      right: "10px",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                    }}
+                  />
+                )}
+              </div>
               <ErrorMessage name="password" />
             </div>
             <div>
               <label htmlFor="confirmPassword">Confirm Password</label>
-              <Field
-                type={showConfirmPassword ? "text" : "password"}
-                id="confirmPassword"
-                name="confirmPassword"
-                autoComplete="current-password"
-              />
-              <Visibility
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                style={{ cursor: "pointer" }}
-              />
+              <div style={{ position: "relative" }}>
+                <Field
+                  type={showConfirmPassword ? "text" : "password"}
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  autoComplete="current-password"
+                />
+                {showConfirmPassword ? (
+                  <VisibilityOff
+                    onClick={toggleConfirmPasswordVisibility}
+                    style={{
+                      cursor: "pointer",
+                      position: "absolute",
+                      right: "10px",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                    }}
+                  />
+                ) : (
+                  <Visibility
+                    onClick={toggleConfirmPasswordVisibility}
+                    style={{
+                      cursor: "pointer",
+                      position: "absolute",
+                      right: "10px",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                    }}
+                  />
+                )}
+              </div>
               <ErrorMessage name="confirmPassword" />
             </div>
 
-            {signUp && (
-              <div>
-                <label htmlFor="email">Email</label>
-                <Field type="text" id="email" name="email" />
-                <ErrorMessage name="email" />
-              </div>
-            )}
+            <p>
+              Already a member?{" "}
+              <span
+                onClick={toggleSignInModal}
+                style={{
+                  cursor: "pointer",
+                  color: "#142e60",
+                  fontWeight: "bold",
+                }}
+              >
+                Log In!
+              </span>
+            </p>
             <div>
               <button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? "Loading..." : "Sign Up"}

@@ -1,4 +1,11 @@
 import React, {useState,} from "react";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import Checkbox from "@mui/material/Checkbox";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import "./Account.css"; 
 
 const ConfirmTeamModal = ({ players, onClose, user }) => {
     const [teamName, setTeamName] = useState("");
@@ -15,7 +22,6 @@ const ConfirmTeamModal = ({ players, onClose, user }) => {
   };
 
   const handleConfirm = () => {
-    // Prepare the data for the team (team name and user_id)
     const teamData = {
       name: teamName,
       user_id: user.id,
@@ -91,8 +97,6 @@ const ConfirmTeamModal = ({ players, onClose, user }) => {
     );
     if (playerIndex !== -1) {
       updatedPlayers[playerIndex].isBenched = !updatedPlayers[playerIndex].isBenched;
-
-      // Update the state with the modified array
       setFantasyPlayers(updatedPlayers);
     }
   };
@@ -101,34 +105,42 @@ const ConfirmTeamModal = ({ players, onClose, user }) => {
   
 
 return (
-    <div className="modal">
-      <h2>Add Team Name Here:</h2>
-      <input
-        type="text"
-        value={teamName}
-        onChange={(e) => setTeamName(e.target.value)}
-      />
+  <div className="modal">
+    <h2>Add Team Name Here:</h2>
+    <TextField
+      variant="outlined"
+      fullWidth
+      value={teamName}
+      onChange={(e) => setTeamName(e.target.value)}
+    />
 
-      <div className="player-grid">
+    <div className="player-grid">
+      <List>
         {fantasyPlayers.map((player) => (
-          <div key={player.nfl_player_id} className="player-card">
-            <h3>{player.first_name}</h3>
-            <label>
-              <input
-                type="checkbox"
-                checked={player.isBenched}
-                onChange={() => handleBenchedToggle(player.id)}
-              />
-              Benched
-            </label>
-          </div>
+          <ListItem key={player.nfl_player_id} className="player-card">
+           <ListItemText
+              primaryTypographyProps={{
+                style: { color: "#142e60", fontWeight: "bold"}, 
+              }}
+              primary={`${player.first_name} ${player.last_name} (${player.position})`}
+            />  <p>Bench?</p> <Checkbox
+              checked={player.isBenched}
+              onChange={() => handleBenchedToggle(player.id)}
+            />
+           
+          </ListItem>
         ))}
-      </div>
-
-      <button onClick={handleClose}>Close</button>
-      <button onClick={handleConfirm}>Confirm Team</button>
+      </List>
     </div>
-  );
+
+    <Button variant="outlined" onClick={handleClose}>
+      Close
+    </Button>
+    <Button variant="contained" style={{background: "#16FF00"}} onClick={handleConfirm}>
+      Confirm Team
+    </Button>
+  </div>
+);
 };
 
 export default ConfirmTeamModal;

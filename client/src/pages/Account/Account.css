@@ -1,40 +1,159 @@
+/* Account.css */
+
 /* All */
-.account-container{
-    width: 80%;
-    margin: 0 auto;
+.account-container {  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 80%;
+  margin: 0 auto;
+  font-family: "Roboto Slab", serif;
 }
-/* LeagueManagement.css */
-.scrollable-row {
-    display: flex;
-    overflow-x: auto; 
-    white-space: nowrap; 
+input.input {
+  background-color: #d3cdcd;
+}
+/* Settings Button */
+.button {
+  cursor: pointer;
+  height: 50px;
+  line-height: 50px;
+  position: absolute;
+  right: 0;
+  text-align: center;
+  top: 0;
+  width: 50px;
+  z-index: 1;
+  font-family: "Roboto Slab", serif;
+  background-color: #333;
+}
+
+.button i {
+  color: #fff;
+  font-size: 1.25em;
+}
+
+/* Original styles for side menu */
+.side-menu {
+  background-color: #333;
+  width: 15%;
+  height: 100%;
+  position: fixed;
+  top: 7.5%;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 20px;
+}
+
+@media (max-width: 768px) {
+  .side-menu {
+    width: 30%;
   }
-  
-  .player-card {
-    font-family: 'Mukta', sans-serif;
-    color: whitesmoke;
+  /* Adjust button styles for smaller screens */
+  .side-menu-button {
     width: 100%; 
-    margin-right: 10px; 
-    border-radius: 15%;    
-    padding: 10px; 
-    background-color: #142e60;
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin: 10px;
-    cursor: pointer;
-    transition: transform 0.3s;
+    text-align: center;
+  }
 }
-.player-card:hover {
-    transform: scale(1.05);
-  }
-    /* /* font-family: 'Mukta', sans-serif;
-font-family: 'Roboto Slab', serif; */
-/*dark gray   background-color: #333; */
-/* dark blue background-color: #142e60; */ */
- 
-  .blue {
-    color: rgb(7, 246, 246);
-  }
-  .red {
-    color: rgb(224, 125, 125);
-  }
+
+.side-menu-button {
+  font-family: "Roboto Slab", serif;
+  background-color: black;
+  border: none;
+  color: whitesmoke;
+  font-size: 1em;
+  margin: 2em 0;
+  cursor: pointer;
+  padding: 10px 20px;
+  text-align: left;
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.side-menu-button.active {
+  background-color: #142e60;
+  color: whitesmoke;
+  transform: scale(1.1);
+}
+
+.side-menu-button:hover {
+  transform: scale(1.1);
+  background-color: #142e60;
+}
+
+/* Main Content */
+.main-content {
+  text-align: left;
+  padding: 2em 6em;
+  padding-left: 18%; /* Adjust this value */
+  font-family: "Roboto Slab", serif;
+  color: #333;
+  border-radius: 5px;
+  background-color: whitesmoke;
+}
+
+h1 {
+  color: #142e60;
+}
+
+.label {
+  color: black;
+  font-weight: bold;
+  text-align: left;
+}
+
+input {
+  width: 100%;
+  margin: 1px 0 5px 0;
+}
+
+#cancel-button,
+#save-button {
+  font-size: 1.2em;
+  padding: 3px;
+  margin-right: 10px;
+}
+
+#cancel-button {
+  background-color: rgb(154, 4, 4);
+  color: #fff;
+}
+
+#save-button {
+  background-color: #142e60;
+  color: whitesmoke;
+}
+
+#save-button:hover,
+#cancel-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+}
+/* league Management */
+.search-bar {
+  display: block;
+  margin: 5% 20%;
+}
+.create-button {
+  background-color: #45a049;
+  font-family: "Roboto Slab", serif;
+  color: black;
+  font-weight: bold;
+  margin-left: 78%; 
+  display: block;
+  height: 10%;
+}
+.create-button:hover {
+  background-color:#142e60 ;
+  color: whitesmoke;
+  font-weight: bold;
+}
+.card-content {
+  word-wrap: break-word;
+}
+
+.team-info {
+  color: #4caf50; 
+}

@@ -1,0 +1,68 @@
+/* Form container styles */
+.form-container {
+  font-family: 'Roboto Slab', serif; 
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  background-color: #aea1a1;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+}
+h2 {
+  color: #142e60;
+}
+/* Form group styles */
+.form-group {
+  margin-bottom: 20px;
+}
+
+/* Label styles */
+label {
+  display: block;
+  font-weight: bold;
+}
+
+/* Input field styles */
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid whitesmoke;
+  font-weight: bold;
+  background-color: #acacad;
+  border-radius: 5px;
+  margin-top: 8px; 
+ }
+
+/* Error message styles */
+.error-message {
+  color: red;
+  margin-top: 5px;
+}
+
+/* Button styles */
+button[type="submit"] {
+  font-family: 'Roboto Slab', serif; 
+  font-size: large;
+  background-color: #142e60;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.5s;
+  margin-top: 10px; 
+}
+
+button[type="submit"]:hover {
+  background-color: #4caf50; 
+}
+
+.input-icon {
+  position: absolute;
+  right: 10px; 
+  top: 50%; 
+  transform: translateY(-50%);
+  cursor: pointer;
+}

@@ -34,3 +34,37 @@
   
   /* Add more styles as needed for your specific design */
   
+/* Center align the tab buttons */
+.centered-tab-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px; /* Adjust as needed */
+}
+
+/* Style the active tab button */
+.active-tab {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+/* Style the inactive tab button */
+button {
+  background-color: transparent;
+  color: #142e60;
+  border: none;
+  cursor: pointer;
+  padding: 10px 20px;
+  border-radius: 5px;
+  margin-right: 10px; /* Add spacing between buttons */
+}
+
+/* Add hover effect to inactive tab button */
+button:hover {
+  background-color: #4caf50;
+  color: white;
+}

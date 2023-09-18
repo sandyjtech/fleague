@@ -46,11 +46,11 @@ const onDragEnd = (result, columns, setColumns) => {
 const LeagueManagement = ({ user }) => {
   const [players, setPlayers] = useState([]);
   const pageSize = 20;
-  //State for creating of teams
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
   const [selectedPlayers, setSelectedPlayers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [isPlayerModalOpen, setIsPlayerModalOpen] = useState(false); // Separate state for player modal
+  const [selectedPlayer, setSelectedPlayer] = useState(null);
 
   //Fetch from backend
   useEffect(() => {
@@ -64,7 +64,6 @@ const LeagueManagement = ({ user }) => {
       })
       .then((playersData) => {
         setPlayers(playersData);
-       
 
         // Update the "All Players" column items with fetched data
         setColumns({
@@ -75,9 +74,17 @@ const LeagueManagement = ({ user }) => {
               id: uuid(),
               content: (
                 <div>
-                  <div style={{}}>{player.first_name} {player.last_name} ({player.position})</div>
-                  <div style={{color: 'lightblue'}}>Team: {player.team}</div>
-                  <div style={{ color: player.status === 'active' ? 'red' : 'green' }}>Status: {player.status}</div>
+                  <div style={{}}>
+                    {player.first_name} {player.last_name} ({player.position})
+                  </div>
+                  <div style={{ color: "lightblue" }}>Team: {player.team}</div>
+                  <div
+                    style={{
+                      color: player.status === "active" ? "red" : "green",
+                    }}
+                  >
+                    Status: {player.status}
+                  </div>
                 </div>
               ),
               playerData: player,
@@ -89,20 +96,34 @@ const LeagueManagement = ({ user }) => {
         console.error("Fetch error:", error);
       });
   }, []);
+
   const getFantasyTeamItems = () => {
     const fantasyTeamColumn = columns[Object.keys(columns)[2]]; // Assuming Fantasy Team is the third column
     return fantasyTeamColumn.items.map((item) => item.playerData);
   };
-  // Function to open the modal
-  const openModal = () => {
+
+  // Function to open the team modal
+  const openTeamModal = () => {
     const fantasyTeamItems = getFantasyTeamItems();
-    setSelectedPlayers(fantasyTeamItems); 
-    setIsModalOpen(true);
+    setSelectedPlayers(fantasyTeamItems);
+    setIsTeamModalOpen(true);
   };
 
-  // Function to close the modal
-  const closeModal = () => {
-    setIsModalOpen(false);
+  // Function to close the team modal
+  const closeTeamModal = () => {
+    setIsTeamModalOpen(false);
+  };
+
+  // Function to open the player modal
+  const openPlayerModal = (player) => {
+    setSelectedPlayer(player);
+    setIsPlayerModalOpen(true);
+  };
+
+  // Function to close the player modal
+  const closePlayerModal = () => {
+    setSelectedPlayer(null);
+    setIsPlayerModalOpen(false);
   };
 
   const initialColumns = {
@@ -115,6 +136,7 @@ const LeagueManagement = ({ user }) => {
   const handleSearchInputChange = (event) => {
     setSearchQuery(event.target.value);
   };
+
   useEffect(() => {
     if (searchQuery) {
       // Fetch players based on the search query
@@ -143,107 +165,123 @@ const LeagueManagement = ({ user }) => {
           console.error("Fetch error:", error);
         });
     } else {
-      // If there's no search query what to display?
+      // If there's no search query, what to display?
     }
   }, [searchQuery]);
-  //console.log(filteredPlayers);
+
   return (
-    <>  <input
-    type="text"
-    placeholder="Search players..."
-    value={searchQuery}
-    onChange={handleSearchInputChange}
-  />
-    <div style={{ display: "flex", justifyContent: "center", height: "100%" }}>
-    
-      <DragDropContext
-        onDragEnd={(result) => onDragEnd(result, columns, setColumns)}
+    <>
+      <h1>Create or edit your team</h1>
+      <p>Simply drag your preferred players into Fantasy Team to Create.</p>
+      <div className="search-bar">
+        <input
+          type="text"
+          placeholder="Search any player..."
+          value={searchQuery}
+          onChange={handleSearchInputChange}
+        />
+      </div>
+      <div
+        style={{ display: "flex", justifyContent: "center", height: "100%" }}
       >
-        {Object.entries(columns).map(([id, column]) => {
-          return (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <h2>{column.name}</h2>
-              <div style={{ margin: 8 }}>
-                <Droppable droppableId={id} key={id}>
-                  {(provided, snapshot) => {
-                    return (
-                      <div
-                        {...provided.droppableProps}
-                        ref={provided.innerRef}
-                        style={{
-                          background: snapshot.isDraggingOver
-                            ? "lightblue"
-                            : "lightslategray",
-                          padding: 4,
-                          width: 250,
-                          minHeight: 500,
-                        }}
-                      >
-                        {column.items.map((item, index) => {
-                          return (
-                            <Draggable
-                              key={item.id}
-                              draggableId={item.id}
-                              index={index}
-                            >
-                              {(provided, snapshot) => {
-                                return (
-                                  <div
-                                    ref={provided.innerRef}
-                                    {...provided.draggableProps}
-                                    {...provided.dragHandleProps}
-                                    style={{
-                                      userSelect: "none",
-                                      padding: 16,
-                                      margin: " 0 0 8px 0",
-                                      minHeight: "50px",
-                                      backgroundColor: snapshot.isDragging
-                                        ? "blue"
-                                        : "black",
-                                      color: "white",
-                                      ...provided.draggableProps.style,
-                                    }}
-                                  >
-                                    {" "}
-                                    {item.content}
-                                  </div>
-                                );
-                              }}
-                            </Draggable>
-                          );
-                        })}
-                        {provided.placeholder}
-                      </div>
-                    );
-                  }}
-                </Droppable>
+        <DragDropContext
+          onDragEnd={(result) => onDragEnd(result, columns, setColumns)}
+        >
+          {Object.entries(columns).map(([id, column]) => {
+            return (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                <h2>{column.name}</h2>
+                <div style={{ margin: 8 }}>
+                  <Droppable droppableId={id} key={id}>
+                    {(provided, snapshot) => {
+                      return (
+                        <div
+                          {...provided.droppableProps}
+                          ref={provided.innerRef}
+                          style={{
+                            background: snapshot.isDraggingOver
+                              ? "lightblue"
+                              : "lightslategray",
+                            padding: 4,
+                            width: 250,
+                            minHeight: 500,
+                          }}
+                        >
+                          {column.items.map((item, index) => {
+                            return (
+                              <Draggable
+                                key={item.id}
+                                draggableId={item.id}
+                                index={index}
+                              >
+                                {(provided, snapshot) => {
+                                  return (
+                                    <div
+                                      ref={provided.innerRef}
+                                      {...provided.draggableProps}
+                                      {...provided.dragHandleProps}
+                                      style={{
+                                        userSelect: "none",
+                                        padding: 16,
+                                        margin: " 0 0 8px 0",
+                                        minHeight: "50px",
+                                        backgroundColor: snapshot.isDragging
+                                          ? "blue"
+                                          : "black",
+                                        color: "white",
+                                        ...provided.draggableProps.style,
+                                      }}
+                                      onClick={() => openPlayerModal(item.playerData)}
+                                    >
+                                      {item.content}
+                                    </div>
+                                  );
+                                }}
+                              </Draggable>
+                            );
+                          })}
+                          {provided.placeholder}
+                        </div>
+                      );
+                    }}
+                  </Droppable>
+                </div>
               </div>
-            </div>
-          );
-        })}
-        {/* Button to open the create team modal */}
-        <button variant="contained" color="primary" onClick={openModal}>
-          {" "}
-          Create Team{" "}
-        </button>
-        <Dialog open={isModalOpen} onClose={closeModal}>
-          <DialogContent>
-            {/* Pass the selected players and team name to the modal */}
-            <ConfirmTeamModal
-            user={user}
-              players={selectedPlayers}              
-              onClose={closeModal}         
-            />
-          </DialogContent>
-        </Dialog>
-      </DragDropContext>
-    </div>
+            );
+          })}
+
+          {/* Team Modal */}
+          <Dialog open={isTeamModalOpen} onClose={closeTeamModal}>
+            <DialogContent>
+              {/* Pass the selected players and team name to the modal */}
+              <ConfirmTeamModal
+                user={user}
+                players={selectedPlayers}
+                onClose={closeTeamModal}
+              />
+            </DialogContent>
+          </Dialog>
+        </DragDropContext>
+      </div>
+
+      {/* Button to open the create team modal */}
+      <button className="create-button" variant="contained" color="primary" onClick={openTeamModal}>
+        Create Team
+      </button>
+
+      {/* Player Modal */}
+      <Dialog open={isPlayerModalOpen} onClose={closePlayerModal}>
+        <DialogContent>
+          {/* Pass the selected player to the modal */}
+          <PlayerModal player={selectedPlayer} onClose={closePlayerModal} />
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

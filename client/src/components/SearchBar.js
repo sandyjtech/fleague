@@ -13,11 +13,11 @@ function SearchBar({ handleSearch, searchQuery, setSearchQuery }) {
         <input
           type="text"
           id="search"
-          placeholder="Search free stuff"
+          placeholder="Search here"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <button type="submit">🔍</button>
+        
       </div>
     </form>
   );

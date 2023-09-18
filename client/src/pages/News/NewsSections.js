@@ -1,29 +1,33 @@
 import React, { useState } from "react";
-import "./News.css"; 
-import NewsItem from "./NewsItem"
+import "./News.css";
+import NewsItem from "./NewsItem";
 
-const NewsSection = ({article, title}) => {
-   
-    const articlesPerPage = 5;
-    const [scrollPosition, setScrollPosition] = useState(0);
-  
-    const visibleArticles = article.slice(
-      scrollPosition,
-      scrollPosition + articlesPerPage
-    );
-  
+const NewsSection = ({ article, title }) => {
+
+
+
+  // Check if there are no articles
+  if (!article || article.length === 0) {
     return (
-      <div>        
-        <h1 className="title">{title}</h1>
-        <div className="news-row">
-          {visibleArticles.map((article) => (
-            <div key={article.id} className="news-section">
-              <NewsItem article={article}/>
-            </div>
-          ))}
-        </div>
+      <div style={{background: "#142e60"}}>
+        <h1 style={{color: "whitesmoke", textAlign: "justify", padding: "10px"}}>Sorry, no news available at the moment</h1>
       </div>
     );
-  };
+  }
+
+  
+
+  return (
+    <div>
+      <div className="news-row">
+        {article.map((article) => (
+          <div key={article.id} className="news-section">
+            <NewsItem article={article} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 export default NewsSection;

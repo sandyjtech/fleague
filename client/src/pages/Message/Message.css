@@ -1,69 +1,42 @@
 /* Contact.css */
 .message-container {
     max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
+    margin: 5% auto;
+    padding: 20px;   
+  
   }
   
-  .tab-buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-  }
-  
-  .active-tab {
-    background-color: #007bff;
-    color: #fff;
-    font-weight: bold;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .tab-content {
-    border: 1px solid #ccc;
-    padding: 20px;
-    border-radius: 5px;
-  }
-  
-  .call-tab,
-  .chat-tab {
-    display: none;
-  }
-  
-  .active-tab-content {
-    display: block;
-  }
-  
-  form {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  input[type="text"],
-  input[type="email"],
-  input[type="tel"] {
-    margin-bottom: 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  button {
-    background-color: #333;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    padding: 10px 20px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #0056b3;
-  }
-  .schedule-call-container{
-    margin-bottom: 10%;
-  }
-  /* Add more specific styling for your calendar and chat interface */
-  
+  /* Center align the tab buttons */
+.centered-tab-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px; /* Adjust as needed */
+}
+
+/* Style the active tab button */
+.active-tab {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+/* Style the inactive tab button */
+button {
+  background-color: transparent;
+  color: #142e60;
+  border: none;
+  cursor: pointer;
+  padding: 10px 20px;
+  border-radius: 5px;
+  margin-right: 10px; /* Add spacing between buttons */
+}
+
+/* Add hover effect to inactive tab button */
+button:hover {
+  background-color: #4caf50;
+  color: white;
+}

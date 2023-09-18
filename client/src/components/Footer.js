@@ -10,8 +10,9 @@ const Footer = () => {
       <div className="footer-content">        
         <div className="footer-items">
           <p>
-            <FaRegCopyright /> {year} Sandra Gonzalez. All rights reserved.
+            <FaRegCopyright /> {year} Sandra Gonzalez.
           </p>
+          <p>All rights reserved.</p>
         </div>
       </div>
     </footer>
