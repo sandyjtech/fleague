@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+
 import "./Posts.css";
 import {
   FaTrash,
@@ -7,7 +7,7 @@ import {
   FaThumbsUp,
   FaThumbsDown,
   FaPlus,
-} from "react-icons/fa"; 
+} from "react-icons/fa";
 import { usePosts } from "../../context/PostsContext";
 import NewPostForm from "./NewPostForm";
 import { useUserAuth } from "../../context/UserAuthProvider";
@@ -75,17 +75,22 @@ const Posts = () => {
     setLikes(newLikes);
   };
 
-  // Function to delete a comment
-  const removeComment = (commentId) => {
-    const commentToDelete = comments.find(
-      (comment) => comment.id === commentId
-    );
-    if (commentToDelete && commentToDelete.user_id === user.id) {
+ // Function to delete a comment
+const removeComment = (commentId) => {
+  const commentToDelete = comments.find((comment) => comment.id === commentId);
+  if (commentToDelete) {
+    if (commentToDelete.user_id === user.id) {
+      // User can delete their own comments
       deleteComment(commentId);
     } else {
-      console.error("You are not authorized to delete this comment.");
+      // User cannot delete another user's comment, but can edit it
+      startEditComment(commentId);
     }
-  };
+  } else {
+    console.error("Comment not found.");
+    // Handle the case where the comment doesn't exist.
+  }
+};
 
   // Function to edit a comment
   const editComment = (commentId, newText) => {
@@ -104,18 +109,18 @@ const Posts = () => {
     }));
   };
 
-  // Function to set the comment being edited
-  const startEditComment = (commentId) => {
-    const commentToEdit = comments.find((comment) => comment.id === commentId);
-    if (commentToEdit && commentToEdit.user_id === user.id) {
-      // Check if the comment exists and is created by the logged-in user
-      setEditingComment(commentId);
-      setEditedCommentText(commentToEdit.content); // Update with the comment content
-    } else {
-      console.error("You are not authorized to edit this comment.");
-      // Handle unauthorized editing (e.g., display an error message).
-    }
-  };
+// Function to set the comment being edited
+const startEditComment = (commentId) => {
+  const commentToEdit = comments.find((comment) => comment.id === commentId);
+  if (commentToEdit && commentToEdit.user_id === user.id) {
+    // Check if the comment exists and is created by the logged-in user
+    setEditingComment(commentId);
+    setEditedCommentText(commentToEdit.content); // Update with the comment content
+  } else {
+    console.error("You are not authorized to edit this comment.");
+    // Handle unauthorized editing (e.g., display an error message).
+  }
+};
 
   // Function to save the edited comment
   const saveEditedComment = (commentId, newText) => {
@@ -144,18 +149,25 @@ const Posts = () => {
   return (
     <div className="posts-container" style={{ backgroundColor: "#333" }}>
       <button
-        onClick={() => toggleNewPostForm()} 
+        style={{
+          backgroundColor: "#142e60",
+          color: "whitesmoke",
+          width: "100%",
+        }}
+        onClick={toggleNewPostForm}
         className="add-post-button"
       >
         <FaPlus /> Add New Post
       </button>
-      <NewPostForm
-        isOpen={isAddingNewPost} 
-        onCancel={() => toggleNewPostForm()} 
-        onAdd={() => createPost} 
-      />
-      {posts.map((post) => (
-        <div key={post.id} className="post">
+      {isAddingNewPost ? (
+        <NewPostForm
+          isOpen={isAddingNewPost}
+          onCancel={() => toggleNewPostForm()}
+          onAdd={() => createPost}
+        />
+      ) : null}
+      {posts.map((post) => ( <>{console.log(post)}
+        <div key={post.user_id} className="post">
           {/* Display the post's author */}
           <p>Author: {post.user ? post.user.username : "Unknown"}</p>
           {/* Edit and Delete buttons for each post */}
@@ -180,25 +192,27 @@ const Posts = () => {
             </>
           ) : (
             <>
+             
+            </>
+          )}{user.id === post.user_id && (
+            <>
               <button
                 onClick={() => startEditPost(post.id)}
-                style={{ backgroundColor: "#142e60", color: "#fff" }}
+                style={{ background: "#4caf50", color: "#fff" }}
               >
-                Edit
+                <FaPencilAlt />
               </button>
-              <button
+              <button className="btn"
                 onClick={() => deletePost(post.id)}
-                style={{ backgroundColor: "#142e60", color: "#fff" }}
-              ></button>
+                style={{ background: "red", color: "#fff" }}
+              >
+                <FaTrash />
+              </button>
             </>
           )}
           <h2>{post.title}</h2>
           <p>{post.content}</p>
-          <Link to={post.link} target="_blank">
-            Read More
-          </Link>
-
-          {/* Comment section */}
+                    {/* Comment section */}
           <div className="comment-section">
             {/* Button to toggle comment section */}
             <button
@@ -310,10 +324,11 @@ const Posts = () => {
                   Add Comment
                 </button>
               </form>
+              
             )}
           </div>
-        </div>
-      ))}
+        </div></>
+      )) }
     </div>
   );
 };

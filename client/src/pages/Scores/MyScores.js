@@ -1,41 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import './Scores.css';
 import { useUserAuth } from '../../context/UserAuthProvider';
+import Avatar from '@mui/material/Avatar';
 
 const MyScores = () => {
   const [players, setPlayers] = useState([]);
   const [team, setTeam] = useState("");
-  const [leagueId, setLeagueId] = useState('');
-  const [week, setWeek] = useState(2); // Set the initial week here
-  const { user } = useUserAuth();
-  const [nflMatchups, setNflMatchups] = useState([]);
-  const [error, setError] = useState(null); // State for handling errors
+  const [week, setWeek] = useState(2); 
+  const { user } = useUserAuth(); 
+  const [error, setError] = useState(null);
   const [showCreateTeamMessage, setShowCreateTeamMessage] = useState(false);
 
-  // Function to fetch NFL week matchup data
-  const fetchNFLWeekMatchups = (leagueId, week) => {
-    if (leagueId && week) {
-      fetch(`https://api.sleeper.app/v1/league/${leagueId}/matchups/${week}`)
-        .then((response) => response.json())
-        .then((data) => {
-          setNflMatchups(data);
-        })
-        .catch((error) => {
-          console.error('Error fetching NFL week matchups:', error);
-        });
-    }
-  };
-
-  // Handle button click to fetch NFL week matchups
-  const handleButtonClick = () => {
-    if (team) {
-      fetchNFLWeekMatchups(leagueId, week);
-    } else {
-      setShowCreateTeamMessage(true);
-    }
-  };
-
-  // Fetch the list of fantasy players for the user
   useEffect(() => {
     fetch(`/api/player_by_userid/${user.id}`)
       .then((response) => {
@@ -58,64 +33,57 @@ const MyScores = () => {
       });
   }, [user.id]);
 
-  // Function to display player name and points for a specific week
-  const getPlayerInfo = (nflPlayerId, weekNum) => {
-    const matchup = nflMatchups.find((match) => match.players_points[nflPlayerId] !== undefined);
-    if (matchup) {
-      const points = matchup.players_points[nflPlayerId];
-      return `${points} for match in week ${weekNum}`;
-    }
-    return 'No data available for this week';
-  };
-
   return (
     <div className="my-scores-container">
       <h1>Fantasy League Team</h1>
       {showCreateTeamMessage ? (
-        <p>Please go to My Account and create a team.</p>
+        <div className="message-card">
+          <p>Please go to My Account and create a team.</p>
+        </div>
       ) : (
         <>
-          {/* User input for Sleeper User ID, League ID, and NFL Week */}
-          <p>Connect your sleeper matchup scores</p>
-          <div className="input-container">
-            <input
-              type="text"
-              placeholder="Enter Sleeper League ID"
-              value={leagueId}
-              onChange={(e) => setLeagueId(e.target.value)}
-            />
-            <input
-              type="number"
-              placeholder="Enter NFL Week"
-              value={week}
-              onChange={(e) => setWeek(e.target.value)}
-            />
-            {/* Submit button */}
-            <button onClick={handleButtonClick}>Submit</button>
-          </div>
-          <div className="scores-table">
-            <div className="team-column">
-              <h2>{team}</h2>
-              <ul>
-                {players.map((player) => (
-                  <li key={player.id}>
-                    {player.team_name} - {player.is_benched ? 'Benched' : 'Starter'} -{' '}
-                    {player.nfl_player_id ? (
-                      <div>
-                        {player.first_name} - {getPlayerInfo(player.nfl_player_id, week)}
-                      </div>
-                    ) : (
-                      <span>No NFL Player ID</span>
-                    )}
-                  </li>
-                ))}
-              </ul>
+          {players.length === 0 ? (
+            <div className="message-card">
+              <p>No players found. Please go to Account and create Team.</p>
             </div>
-            <div className="opponent-column">
-              <h2>Opponent</h2>
-              {/* Render opponent information here */}
-            </div>
-          </div>
+          ) : (
+            <>
+              <p>Connect your sleeper matchup scores</p>          
+              <div className="scores-table">
+                <div className="team-column">
+                  <h2 style={{color: 'whitesmoke'}}>{team}</h2>
+                  <h3 style={{color:  '#4caf50', marginTop: '15px'}}>Starters</h3>
+                  <ul>
+                    {players
+                      .filter((player) => !player.is_benched)
+                      .map((player) => (
+                        <li key={player.id}>
+                          <div className="player-avatar">
+                            {/* Add player avatar here */}
+                          </div>
+                          {player.team_name} - 
+                        </li>
+                      ))}
+                  </ul>
+                  <h3 style={{color: 'black', marginTop: '15px'}}>Benched</h3>
+                  <ul>
+                    {players
+                      .filter((player) => player.is_benched)
+                      .map((player) => (
+                        <li key={player.id}>
+                          <Avatar src={player.avatar_url} alt={player.player_name} />
+                          {player.team_name} - Benched
+                        </li>
+                      ))}
+                  </ul>
+                </div>
+                <h2 style={{color: ' #ccc'}}>vs</h2>
+                <div className="opponent-column">
+                  <h2 style={{color: 'whitesmoke'}}>Opponent</h2>
+                </div>
+              </div>
+            </>
+          )}
         </>
       )}
     </div>
@@ -123,7 +91,3 @@ const MyScores = () => {
 };
 
 export default MyScores;
-
-
-
-

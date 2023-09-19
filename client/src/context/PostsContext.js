@@ -1,5 +1,6 @@
 // PostsContext.js
 import React, { useContext, useState, useEffect } from "react";
+import {useUserAuth} from "./UserAuthProvider";
 
 const PostsContext = React.createContext();
 export const usePosts = () => {
@@ -10,7 +11,7 @@ const PostsProvider = ({ children }) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [comments, setComments] = useState([]);
-
+const {user} = useUserAuth()
   useEffect(() => {
     fetch("/api/posts")
       .then((r) => {
@@ -46,28 +47,38 @@ const PostsProvider = ({ children }) => {
     }
   }
 //Create Post// Function to create a new post
-  function createPost(postData) {
-    fetch("/api/posts", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(postData),
+function createPost(postData) {
+  // Set default values if postData is not provided
+  const defaultPostData = {
+    title: "",
+    content: "",
+    user_id: user.id, 
+  };
+
+  // Merge the default values with the provided postData (if any)
+  const mergedPostData = { ...defaultPostData, ...postData };
+
+  fetch("/api/posts", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(mergedPostData),
+  })
+    .then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      throw new Error("Failed to create post");
     })
-      .then((res) => {
-        if (res.ok) {
-          return res.json(); // Parse the response JSON
-        }
-        throw new Error("Failed to create post");
-      })
-      .then((newPost) => {
-        // Append the new post to the existing posts state
-        setPosts((prevPosts) => [...prevPosts, newPost]);
-      })
-      .catch((error) => {
-        console.error("Error creating post:", error);
-      });
-  }
+    .then((newPost) => {
+      // Append the new post to the existing posts state
+      setPosts((prevPosts) => [...prevPosts, newPost]);
+    })
+    .catch((error) => {
+      console.error("Error creating post:", error);
+    });
+}
   //Delete the post
   function deletePost(postId) {
     fetch(`/api/post/${postId}`, {

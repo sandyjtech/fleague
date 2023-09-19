@@ -6,13 +6,13 @@ span {
 
 .title {
   font-size: x-large;
-  color: #142e60; /* Change title color */
+  color: #142e60; 
   margin: 5px;
   text-align: left;
 }
 
 div.content {  
-  margin: 0 10%; 
+  margin: 0 5%; 
 }
 
 .stat-card {

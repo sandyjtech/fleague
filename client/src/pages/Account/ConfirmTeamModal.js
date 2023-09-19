@@ -1,23 +1,23 @@
-import React, {useState,} from "react";
+import React, { useState } from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import Checkbox from "@mui/material/Checkbox";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import "./Account.css"; 
+import "./Account.css";
 
 const ConfirmTeamModal = ({ players, onClose, user }) => {
-    const [teamName, setTeamName] = useState("");
-    const [fantasyPlayers, setFantasyPlayers] = useState(
-      players.map((player) => ({
-        ...player,
-        isBenched: false, 
-      }))
-    );
+  const [teamName, setTeamName] = useState("");
+  const [fantasyPlayers, setFantasyPlayers] = useState(
+    players.map((player) => ({
+      ...player,
+      isBenched: false,
+    }))
+  );
 
   const handleClose = () => {
-    console.log("Close button clicked"); 
+    console.log("Close button clicked");
     onClose();
   };
 
@@ -96,51 +96,67 @@ const ConfirmTeamModal = ({ players, onClose, user }) => {
       (player) => player.id === playerId
     );
     if (playerIndex !== -1) {
-      updatedPlayers[playerIndex].isBenched = !updatedPlayers[playerIndex].isBenched;
+      updatedPlayers[playerIndex].isBenched =
+        !updatedPlayers[playerIndex].isBenched;
       setFantasyPlayers(updatedPlayers);
     }
   };
 
-//console.log(players)
-  
+  //console.log(players)
 
-return (
-  <div className="modal">
-    <h2>Add Team Name Here:</h2>
-    <TextField
-      variant="outlined"
-      fullWidth
-      value={teamName}
-      onChange={(e) => setTeamName(e.target.value)}
-    />
+  return (
+    <div className="modal">
+      <div className="team-card">
+        <h2>Create Your Team</h2>
+        <TextField
+          fullWidth
+          value={teamName}
+          onChange={(e) => setTeamName(e.target.value)}
+          placeholder="Team Name"
+        />
 
-    <div className="player-grid">
-      <List>
-        {fantasyPlayers.map((player) => (
-          <ListItem key={player.nfl_player_id} className="player-card">
-           <ListItemText
-              primaryTypographyProps={{
-                style: { color: "#142e60", fontWeight: "bold"}, 
-              }}
-              primary={`${player.first_name} ${player.last_name} (${player.position})`}
-            />  <p>Bench?</p> <Checkbox
-              checked={player.isBenched}
-              onChange={() => handleBenchedToggle(player.id)}
-            />
-           
-          </ListItem>
-        ))}
-      </List>
+        <div className="player-grid">
+          <List>
+            {fantasyPlayers.map((player) => (
+              <ListItem key={player.nfl_player_id} className="player-card">
+                <ListItemText
+                  primaryTypographyProps={{
+                    style: {
+                      color: "#142e60",
+                      fontWeight: "bold",
+                      fontFamily: "Roboto Slab",
+                    },
+                  }}
+                  primary={`${player.first_name} ${player.last_name} (${player.position})`}
+                />{" "}
+                Benched?
+                <Checkbox
+                  checked={player.isBenched}
+                  onChange={() => handleBenchedToggle(player.id)}
+                />
+              </ListItem>
+            ))}
+          </List>
+        </div>
+        <div className="button-container">
+          <Button
+            variant="outlined"
+            style={{ color: "red", fontFamily: "Roboto Slab" }}
+            onClick={handleClose}
+          >
+            Close
+          </Button>
+          <Button
+            variant="contained"
+            style={{ background: "#142e60", fontFamily: "Roboto Slab" }}
+            onClick={handleConfirm}
+          >
+            Confirm Team
+          </Button>
+        </div>
+      </div>
     </div>
-
-    <Button variant="outlined" onClick={handleClose}>
-      Close
-    </Button>
-    <Button variant="contained" style={{background: "#16FF00"}} onClick={handleConfirm}>
-      Confirm Team
-    </Button>
-  </div>
-);
+  );
 };
 
 export default ConfirmTeamModal;

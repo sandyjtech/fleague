@@ -50,7 +50,7 @@ const Home = () => {
           time: event.date,
         }));
         setSchedules(formattedSchedules);
-        //console.log(schedules);
+        //console.log(formattedSchedules);
       })
       .catch((error) => {
         console.error("Error fetching schedules:", error);

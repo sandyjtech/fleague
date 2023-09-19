@@ -10,25 +10,19 @@ const NewPostForm = ({ isOpen, onCancel, onAdd }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // You may want to validate the title and content here
-
     createPost({ title, content });
 
     // Clear the form fields after submission
     setTitle("");
     setContent("");
 
-    // Close the form after submission
     onCancel();
-    // Notify the parent component (Posts.js) that a new post has been added
     onAdd();
   };
 
   return (
     <div className={`new-post-form ${isOpen ? "open" : ""}`}>
-      <button onClick={onCancel} className="cancel-button">
-        Cancel
-      </button>
+      
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="title" className="form-label">
@@ -53,7 +47,9 @@ const NewPostForm = ({ isOpen, onCancel, onAdd }) => {
             className="form-textarea"
           />
         </div>
-        <button type="submit" className="form-button">
+        <button onClick={onCancel} className="cancel-button">
+        Cancel
+      </button><button type="submit" className="form-button">
           Create Post
         </button>
       </form>

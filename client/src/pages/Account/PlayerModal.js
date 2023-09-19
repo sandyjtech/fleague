@@ -11,7 +11,7 @@ const PlayerModal = ({ player, onClose }) => {
   if (!player) {
     return null;
   }
-
+  const activeColor = player.injury_status === "Active" ? "#4caf50" : "red";
   return (
     <div className="modal">
       <div className="modal-content athlete-card">
@@ -39,7 +39,8 @@ const PlayerModal = ({ player, onClose }) => {
           </p>
           <p className="athlete-info">Number: {player.number}</p>
           <p className="athlete-info">Team: {player.team}</p>
-          <p className="athlete-info">Injury Status: {player.injury_status}</p>
+          <p className="athlete-info">Injury Status: 
+          <span style={{color: activeColor}}> {player.injury_status}</span></p>
           <p className="athlete-info">Position: {player.position}</p>
         </div>
         <button className="close-button" onClick={handleClose}>

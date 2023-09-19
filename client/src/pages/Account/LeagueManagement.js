@@ -196,7 +196,7 @@ const LeagueManagement = ({ user }) => {
                   alignItems: "center",
                 }}
               >
-                <h2>{column.name}</h2>
+                <h2 style={{color: 'black'}}>{column.name}</h2>
                 <div style={{ margin: 8 }}>
                   <Droppable droppableId={id} key={id}>
                     {(provided, snapshot) => {
@@ -206,11 +206,12 @@ const LeagueManagement = ({ user }) => {
                           ref={provided.innerRef}
                           style={{
                             background: snapshot.isDraggingOver
-                              ? "lightblue"
-                              : "lightslategray",
+                              ? "lightslategray"
+                              : "whitesmoke",
                             padding: 4,
                             width: 250,
                             minHeight: 500,
+                            borderRadius:'5px',
                           }}
                         >
                           {column.items.map((item, index) => {
@@ -219,6 +220,7 @@ const LeagueManagement = ({ user }) => {
                                 key={item.id}
                                 draggableId={item.id}
                                 index={index}
+                                
                               >
                                 {(provided, snapshot) => {
                                   return (
@@ -231,9 +233,10 @@ const LeagueManagement = ({ user }) => {
                                         padding: 16,
                                         margin: " 0 0 8px 0",
                                         minHeight: "50px",
+                                        borderRadius: '5px',
                                         backgroundColor: snapshot.isDragging
-                                          ? "blue"
-                                          : "black",
+                                          ? "#4caf50"
+                                          : "#142e60",
                                         color: "white",
                                         ...provided.draggableProps.style,
                                       }}

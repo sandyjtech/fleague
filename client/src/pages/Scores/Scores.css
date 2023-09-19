@@ -1,70 +1,43 @@
 /* Scores.css */
 .my-scores-container {
-    text-align: center;
-    margin: 20px auto;
-    max-width: 800px;
-    padding: 20px;
-  }
-  
-  .input-container {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 20px;
-  }
-  
-  .scores-table {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .team-column, .opponent-column {
-    flex-basis: 45%; /* Adjust the column width as needed */
-  }
-  
-  ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  li {
-    margin-bottom: 10px;
-    padding: 5px;
-    border: 1px solid #ccc;
-  }
-  
-  /* Add more styles as needed for your specific design */
-  
-/* Center align the tab buttons */
-.centered-tab-buttons {
+  text-align: center;
+  margin: 20px auto;
+  width: 100%;
+  padding: 20px;
+  background-color: whitesmoke;  
+  border-radius: 5px;
+}
+
+.scores-table {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 20px; /* Adjust as needed */
-}
-
-/* Style the active tab button */
-.active-tab {
-  background-color: #4caf50;
-  color: white;
-  border: none;
+  justify-content: space-between;
+  background-color: #333;
   border-radius: 5px;
-  padding: 10px 20px;
-  cursor: pointer;
+  margin: 5% 0;
 }
 
-/* Style the inactive tab button */
-button {
-  background-color: transparent;
-  color: #142e60;
-  border: none;
-  cursor: pointer;
-  padding: 10px 20px;
+.team-column,
+.vs-column,
+.opponent-column {
+    
+  padding: 10px;
+  border: 1px solid #ccc;
   border-radius: 5px;
-  margin-right: 10px; /* Add spacing between buttons */
+  text-align: justify;
 }
 
-/* Add hover effect to inactive tab button */
-button:hover {
-  background-color: #4caf50;
-  color: white;
+.vs-column {
+  background-color: #333; 
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  background-color: whitesmoke;
+  margin-bottom: 10px;
+  padding: 5px;
+  border: 1px solid #ccc;
 }

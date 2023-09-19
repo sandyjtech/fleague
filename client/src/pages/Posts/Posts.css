@@ -1,5 +1,4 @@
 /* Posts.css */
-
 .posts-container {
   display: flex;
   flex-wrap: wrap;
@@ -8,7 +7,7 @@
   max-width: 900px;
   margin: 20% auto;
 }
-
+button.btn{background-color: #0056b3;}
 .post {
   background-color: #fff;
   border: 1px solid #ddd;
@@ -98,7 +97,7 @@
 }
 
 .comment-buttons button svg {
-  margin-right: 5px;
+  margin: 0 auto;
 }
 
 .edit-button {
@@ -140,4 +139,64 @@
   border-radius: 5px;
   margin-top: 10px;
   resize: vertical;
+}
+button.add-post-button{
+  width: 10%;
+}
+
+/* Add Post Form */
+/* Update the NewPostForm component's CSS */
+.new-post-form {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px; /* Adjust the maximum width as needed */
+  margin: 0 auto;
+}
+
+.new-post-form label {
+  color: #142e60;
+  text-align: left;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.new-post-form input[type="text"],
+.new-post-form textarea { 
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-top: 10px;
+  font-size: 1.2rem;
+}
+
+.new-post-form textarea {  
+  resize: vertical;
+  min-height: 100px; 
+}
+
+.cancel-button {
+  background-color:rgb(142, 5, 5);
+  color: rgb(252, 252, 252);
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  margin-top: 10px;
+}
+
+.add-post-button {
+  color: #fff;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  margin-top: 10px;
+}
+
+.add-post-button:hover {
+  background-color: #0e5bac; 
 }

@@ -10,9 +10,6 @@
   margin: 0 auto;
   font-family: "Roboto Slab", serif;
 }
-input.input {
-  background-color: #d3cdcd;
-}
 /* Settings Button */
 .button {
   cursor: pointer;
@@ -32,7 +29,9 @@ input.input {
   color: #fff;
   font-size: 1.25em;
 }
-
+.input{
+  background-color: whitesmoke;
+}
 /* Original styles for side menu */
 .side-menu {
   background-color: #333;
@@ -138,7 +137,7 @@ input {
 }
 .create-button {
   background-color: #45a049;
-  font-family: "Roboto Slab", serif;
+  font-family: 'Roboto Slab', serif; 
   color: black;
   font-weight: bold;
   margin-left: 78%; 
@@ -150,10 +149,40 @@ input {
   color: whitesmoke;
   font-weight: bold;
 }
-.card-content {
+.card-content {  
   word-wrap: break-word;
 }
 
 .team-info {
   color: #4caf50; 
+}
+/* Card Styles */
+.team-card {  
+  background-color: whitesmoke;
+  border-radius: 5px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+/* Button Container Styles */
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* Player Card Styles */
+.player-card {
+  font-family: 'Roboto Slab', serif; 
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+.player-card p {  
+  margin: 0;
 }

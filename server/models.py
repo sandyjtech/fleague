@@ -12,9 +12,9 @@ class User(db.Model, SerializerMixin):
     email = db.Column(db.String(255), nullable=False)
     _password = db.Column(db.String, nullable=False) 
         
-    user_posts = db.relationship("Post", backref="user")
-    post_comments = db.relationship("Comment", backref="user")
-    my_team = db.relationship("FantasyTeam", backref="user")
+    user_posts = db.relationship("Post", backref="user", cascade="delete")
+    post_comments = db.relationship("Comment", backref="user", cascade="delete")
+    my_team = db.relationship("FantasyTeam", backref="user", cascade="delete")
     my_players = association_proxy("my_team", "team_player")
     leagues = association_proxy('league_members', 'league')
     user_post_comments = association_proxy("Post", "post_comments")    
@@ -82,7 +82,7 @@ class Post(db.Model, SerializerMixin):
     title = db.Column(db.String(255), nullable=False)
     content = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    post_comments = db.relationship("Comment", backref="post")
+    post_comments = db.relationship("Comment", backref="post", cascade="delete")
     serialize_rules = ("-post_comments.post.post_comments",)
      
 class Comment(db.Model, SerializerMixin):
@@ -112,7 +112,7 @@ class FantasyPlayer(db.Model, SerializerMixin):
     performances = db.relationship(
         "PlayerPerformance",
         primaryjoin="FantasyPlayer.id == PlayerPerformance.fantasy_player_id",
-        backref="fantasy_player"
+        backref="fantasy_player", cascade="delete"
     )
  
     serialize_rules = ("-performances.fantasy_player",)
@@ -121,7 +121,6 @@ class PlayerPerformance(db.Model, SerializerMixin):
     __tablename__ = "player_performances"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     fantasy_player_id = db.Column(db.Integer, db.ForeignKey("fantasy_players.id"))
-    opponent_player_id = db.Column(db.Integer, db.ForeignKey("fantasy_players.id"), nullable=True)
     week_num = db.Column(db.Integer)
     match_id = db.Column(db.String)
     ppr_points = db.Column(db.Float, default=0.0)
@@ -150,8 +149,8 @@ class NFLPlayer(db.Model, SerializerMixin):
     # Add columns for additional fields from the API response
     hashtag = db.Column(db.String, nullable=True)
     # Add other fields as needed
-    f_players = db.relationship("FantasyPlayer", backref="nfl_player")
-    fantasy_positions = db.relationship("NFLPlayerFantasyPosition", backref="nfl_player")
+    f_players = db.relationship("FantasyPlayer", backref="nfl_player", cascade="delete")
+    fantasy_positions = db.relationship("NFLPlayerFantasyPosition", backref="nfl_player", cascade="delete")
     serialize_rules = ("-fantasy_positions", "-f_players.nfl_player",)
     
 class NFLPlayerFantasyPosition(db.Model, SerializerMixin):

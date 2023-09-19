@@ -72,6 +72,13 @@ class UserDetailsById(Resource):
         if not user:
             raise ValueError("User not found")        
         return make_response(user.to_dict(), 200)
+    def delete(self, id):
+        user = User.query.filter_by(id=id).first()
+        if not user:
+            return make_response({"error": "User not found"}, 404)
+        db.session.delete(user)
+        db.session.commit()
+        return make_response("", 204)
 api.add_resource(UserDetailsById, '/users/<int:id>')
 #Posts#####################################
 class PostResource(Resource):
@@ -376,9 +383,26 @@ api.add_resource(FantasyPlayersByUserIDResource, "/api/player_by_userid/<int:use
 
 ##Player Scores
 class PlayerPerformances(Resource):
-    def get(self):
-        scores = [t.to_dict() for t in PlayerPerformance.query.all()]
-        return make_response(scores, 200)
+    def all_scores():
+    # Fetch all player performances from the database
+        performances = PlayerPerformance.query.all()
+
+    # Define the headers for the table
+        headers = ['First Name', 'Last Name', 'Position', 'Team', 'Standard Points', 'PPR Points']
+
+    # Create a list of dictionaries with player information
+        player_data = [
+            {
+            'First Name': performance.fantasy_player.nfl_player.first_name,
+            'Last Name': performance.fantasy_player.nfl_player.last_name,
+            'Position': performance.fantasy_player.nfl_player.position,
+            'Team': performance.fantasy_player.nfl_player.team,
+            'Standard Points': performance.standard_points,
+            'PPR Points': performance.ppr_points
+            }
+            for performance in performances
+        ]
+   
     def post(self):
         data = request.get_json()
         try:
@@ -393,7 +417,7 @@ class PlayerPerformancesByPlayerId(Resource):
     def get(self, player_id):
         scores = PlayerPerformance.query.filter_by(fantasy_player_id=player_id).all()
         if not scores:
-            return make_response({"error": "Comments not found for this post"}, 404)
+            return make_response({"error": "Scores not found for this player"}, 404)
         return make_response([scores.to_dict() for scores in scores], 200)
 api.add_resource(PlayerPerformancesByPlayerId, "/api/player_performances/<int:player_id>")
 

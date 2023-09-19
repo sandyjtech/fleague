@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import "./Calender.css";
 import CancelIcon from "@mui/icons-material/Cancel";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+
 
 const Calendar = ({ schedules }) => {
   const currentDate = new Date();
@@ -24,7 +28,7 @@ const Calendar = ({ schedules }) => {
   );
 
   // Format event date function
-  const formatEventDate = (eventDateStr) => {
+  const formatEventDate = (eventDateStr) => {    
     const eventDate = new Date(eventDateStr);
     return eventDate.toString().substring(0, 15);
   };
@@ -47,7 +51,10 @@ const Calendar = ({ schedules }) => {
   // Filter events for the selected date
   const eventsForSelectedDate = schedules.filter(
     (event) => event.date === selectedDate
+    
   );
+  console.log(schedules) 
+
   const formatEventTime = (eventTimeStr, timeZone) => {
     const eventTime = new Date(eventTimeStr);
     const options = {
@@ -81,26 +88,28 @@ const Calendar = ({ schedules }) => {
               {day}
               
               {eventsForDay.length > 0 && (
-                <div
-                  className="event-date"
-                  onClick={() => handleEventDayClick(eventsForDay[0].date)}
-                >
-                  Game Day
-                </div>
-              )}
+  <div
+    className="event-date"
+    onClick={() => handleEventDayClick(eventsForDay[0].date)}
+  >
+    Game Day
+  </div>
+  
+)}
+{/* {console.log(day, eventsForDay)} */}
             </div>
           );
         })}
       </div>
       {isModalOpen && (
-        <div className="modal-background">
-          <div className="modal-card">
-            <div className="modal-header">
-              <h3>Games for {formatEventDate(selectedDate)}</h3>
-              <button className="close-button" onClick={closeModal}>
-                <CancelIcon />
-              </button>
-            </div>
+        <Dialog open={isModalOpen} onClose={closeModal} maxWidth="md">
+          <DialogTitle style={{fontFamily: 'Roboto Slab'}}>
+            Games for {formatEventDate(selectedDate)}
+            <button className="close-button" onClick={closeModal}>
+              <CancelIcon />
+            </button>
+          </DialogTitle>
+          <DialogContent>
             <ul>
               {eventsForSelectedDate.map((event, index) => (
                 <li key={index}>
@@ -108,7 +117,9 @@ const Calendar = ({ schedules }) => {
                     {formatEventDate(event.date)}
                   </div>
                   <div className="event-details">
-                    <div style={{color: "#142e60", fontWeight: "bold"}}>{event.title}</div>
+                    <div style={{ color: "#142e60", fontWeight: "bold" }}>
+                      {event.title}
+                    </div>
                     <div>{event.opponent}</div>
                     <div>
                       {formatEventTime(event.time, "Eastern Time (ET)")}
@@ -117,8 +128,8 @@ const Calendar = ({ schedules }) => {
                 </li>
               ))}
             </ul>
-          </div>
-        </div>
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );

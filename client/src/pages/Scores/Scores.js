@@ -6,17 +6,17 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import SportsIcon from '@mui/icons-material/Sports';
 import StarIcon from '@mui/icons-material/Star';
-
-const Scores = () => {  
-
-  // State to manage which tab is active
+//https://api.sleeper.com/stats/nfl/player/${playerID}?season_type=regular&season=${currentYear}&grouping=week
+const Scores = () => {   
   const [activeTab, setActiveTab] = useState(0);
+  const [players, setPlayers] = useState([])
+const [playerPoints, setPlayerPoints] = useState([])
 
   // Function to handle tab change
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
   };
-
+ 
   return (
     <div className="message-container content">
       <div className="centered-tab-buttons"> {/* Added class */}

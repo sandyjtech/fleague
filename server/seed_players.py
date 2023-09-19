@@ -83,26 +83,3 @@ if __name__ == '__main__':
         seed_nfl_player_data(player_data)
         print("Data seeding complete.")
 
-
-    
-# 0 0 * * * /usr/bin/python3 /path/to/your/script.py
-# This will execute your script daily at 12:00 AM.
-
-# Logging and Error Handling:
-# Ensure that your script logs any errors or issues that might occur during the data fetching and seeding process. This will help you troubleshoot any problems that may arise.
-
-# Run the Script Manually First:
-# Before scheduling the script, run it manually to ensure that it fetches data correctly and seeds it into the database without any issues.
-
-# Environment Configuration:
-# Make sure your script has the necessary environment configuration, such as database connection settings, API endpoints, and any required API keys or tokens.
-
-# Security:
-# If the API requires authentication, ensure that you securely store any sensitive credentials or tokens and do not expose them in your code.
-
-# Testing:
-# Thoroughly test your script to handle various scenarios, such as API errors, database connection issues, and data integrity.
-
-# By following these steps, you can create a script that fetches data from an API and seeds it into your database once a day, keeping your player data up-to-date.
-    
-
