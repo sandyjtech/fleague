@@ -9,6 +9,7 @@ from sqlalchemy import or_
 import random
 import logging
 
+
 # Local imports
 from config import app,api, Resource, db, socketio
 from models import User, LeagueMember,League, Post, Comment, FantasyTeam, FantasyPlayer, PlayerPerformance, NFLPlayer, NFLPlayerFantasyPosition
@@ -73,13 +74,42 @@ class UserDetailsById(Resource):
             raise ValueError("User not found")
         return make_response(user.to_dict(), 200)
     def delete(self, id):
-        user = User.query.filter_by(id=id).first()
+        user = FantasyPlayer.query.filter_by(id=id).first()
         if not user:
             return make_response({"error": "User not found"}, 404)
         db.session.delete(user)
         db.session.commit()
         return make_response("", 204)
+    
+    def patch(self, id):
+        data = request.get_json()
+        user = User.query.get(id)
+        if not user:
+            return make_response({"error": "user not found"}, 404)
+        try:
+            for attr, value in data.items():
+                setattr(user, attr, value)
+        except:
+            return make_response({"errors": ["validation errors"]}, 400)
+        db.session.add(user)
+        db.session.commit()
+        return make_response(user.to_dict(), 202)
 api.add_resource(UserDetailsById, '/users/<int:id>')
+class VerifyPassword(Resource):
+    def post(self, user_id):
+        req_json = request.get_json()
+        current_password = req_json.get("current_password")
+        user = User.query.get(user_id)
+
+        if not user:
+            abort(404, "User not found")
+
+        if user.check_password(current_password):
+            return {"message": "Password verification successful"}, 200
+
+        return {"error": "Incorrect password"}, 401
+api.add_resource(VerifyPassword, '/users/<int:user_id>/verify-password')
+
 #Posts#####################################
 class PostResource(Resource):
     def get(self):
@@ -453,9 +483,24 @@ class Leaderboard(Resource):
 
         return make_response(jsonify(performance_data), 200)
 api.add_resource(Leaderboard, "/api/leaderboard")
-##Chat Events
+
+@socketio.on('message')
+def handle_message(message):
+    print('Received message:', message)
+    socketio.emit('message', message)
+
+@socketio.on('send_message')
+def handle_message(data):
+    message = data['message']
+    username = data['username']
+    print(f'Received message from {username}: {message}')
+    socketio.emit('receive_message', {'message': message, 'username': username})
 
     
+@socketio.on('message')
+def handle_message(message):
+    socketio.send(message)
     
 if __name__ == '__main__':
     socketio.run(app, debug=True, port=5555)
+    

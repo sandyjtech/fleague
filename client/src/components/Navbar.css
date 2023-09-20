@@ -19,7 +19,7 @@
 /* Desktop Menu */
 .desktop-menu {
   display: flex;
-  justify-content: space-between; /* Distribute items evenly */
+  justify-content: space-between; 
   text-align: center;
   margin: 0 auto;
   

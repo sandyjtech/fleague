@@ -23,7 +23,7 @@ const Header = () => {
 
   const handleLoginModalOpen = () => {
     setLoginModalOpen(true);
-    setSignupModalOpen(false); // Close the Signup modal when opening Sign In
+    setSignupModalOpen(false); 
   };
 
   const handleLoginModalClose = () => {
@@ -32,7 +32,7 @@ const Header = () => {
 
   const handleSignupModalOpen = () => {
     setSignupModalOpen(true);
-    setLoginModalOpen(false); // Close the Sign In modal when opening Signup
+    setLoginModalOpen(false); 
   };
 
   const handleSignupModalClose = () => {
