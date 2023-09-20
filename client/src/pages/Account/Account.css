@@ -186,3 +186,7 @@ input {
 .player-card p {  
   margin: 0;
 }
+.tab-content {
+  position: relative;
+  margin: 0 auto
+}

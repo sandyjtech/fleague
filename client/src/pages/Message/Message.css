@@ -1,12 +1,150 @@
 /* Contact.css */
+/* Message.css */
+.tab-content {
+margin: 0 auto;
+}
+/* Container for the entire chat app */
 .message-container {
-    max-width: 800px;
-    margin: 5% auto;
-    padding: 20px;   
-  
-  }
-  
-  /* Center align the tab buttons */
+  width: 80%;
+  height: 550px;
+  margin: 5px auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Align user list to the left */
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  overflow-y: scroll;
+}
+div {
+  margin-top: 0;
+}
+/* Chat header */
+.message-container h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+/* User list */
+.user-list {
+  background-color: #ccc; /* Gray background color for user list */
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.user-list h3 {
+  font-size: 16px;
+  margin: 0;
+  color: #333;
+}
+
+.user-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.user-list li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #666;
+}
+
+.user-list li span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-left: 10px;
+}
+
+.user-list .active {
+  background-color: #4caf50; /* Green dot for active users */
+}
+
+.user-list .inactive {
+  background-color: #ccc; /* Gray dot for inactive users */
+}
+
+/* Message display */
+.message-display {
+  width: 100%;
+}
+.message-display ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.message-display li {
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #333;
+}
+
+.message-bubble {
+  padding: 8px;
+  border-radius: 8px;
+  max-width: 100%;
+}
+
+/* Message styles for current user and other users */
+.current-user {
+  width: 50%;
+  text-align: left;
+  background-color: #DCF8C6; /* Green background color for current user (sent messages) */
+  border: 1px solid #4CAF50; /* Green border color for current user (sent messages) */
+  margin-right: 0;
+}
+
+.other-user {
+  width: 50%;
+  text-align: left;
+  background-color: #C1E7FF; /* Blue background color for other users (received messages) */
+  border: 1px solid #2196F3; /* Blue border color for other users (received messages) */
+  margin-left: 0;
+}
+
+/* Message input */
+.message-input {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.message-input input[type="text"] {
+  flex-grow: 1;
+  border: none;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.message-input button {
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  margin-left: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.message-input button:hover {
+  background-color: #45a049;
+}
+
+/* Centered tab buttons (if any) */
 .centered-tab-buttons {
   display: flex;
   justify-content: center;
@@ -14,7 +152,7 @@
   margin-bottom: 20px; /* Adjust as needed */
 }
 
-/* Style the active tab button */
+/* Active tab button style (if any) */
 .active-tab {
   background-color: #4caf50;
   color: white;
@@ -24,7 +162,7 @@
   cursor: pointer;
 }
 
-/* Style the inactive tab button */
+/* Inactive tab button style (if any) */
 button {
   background-color: transparent;
   color: #142e60;
@@ -35,7 +173,7 @@ button {
   margin-right: 10px; /* Add spacing between buttons */
 }
 
-/* Add hover effect to inactive tab button */
+/* Hover effect for inactive tab buttons (if any) */
 button:hover {
   background-color: #4caf50;
   color: white;

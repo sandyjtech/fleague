@@ -18,7 +18,7 @@ const [playerPoints, setPlayerPoints] = useState([])
   };
  
   return (
-    <div className="message-container content">
+    <div className="scores-container content">
       <div className="centered-tab-buttons"> {/* Added class */}
         <Tabs
           textColor="black"

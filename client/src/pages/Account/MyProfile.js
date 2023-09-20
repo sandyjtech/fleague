@@ -8,7 +8,10 @@ import Typography from '@mui/material/Typography';
 
 const MyProfile = ({ user }) => {
   const [players, setPlayers] = useState([]);
-  const [selectedMenu, setSelectedMenu] = useState("myAccount"); // Default selected menu
+  const [selectedMenu, setSelectedMenu] = useState("myAccount"); 
+const [ currentPassword,setCurrentPassword] = useState("")
+const [ newEmail, setNewEmail] = useState();           
+const [newUsername, setNewUsername] = useState('')
 
   useEffect(() => {
     fetch(`/api/fantasy_players_by_user_id/${user.id}`)
@@ -26,10 +29,52 @@ const MyProfile = ({ user }) => {
         console.error("Error fetching fantasy players:", error);
       });
   }, [user.id]);
-
+console.log( newEmail, newUsername, currentPassword,);
 console.log(players)
   const handleMenuClick = (menu) => {
     setSelectedMenu(menu);
+  };
+  const handleUserEdit = async () => {
+    try {
+      // Verify the current password first
+      const passwordVerification = await fetch(`/users/${user.id}/verify-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ current_password: currentPassword }),
+      });
+  
+      if (passwordVerification.ok) {
+        // Password verification successful, proceed with updating email and username
+        const requestBody = {
+          email: newEmail,
+          username: newUsername,
+        };
+  
+        const response = await fetch(`/users/${user.id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestBody),
+        });
+  
+        if (response.ok) {
+          // User information successfully updated
+          // You may want to update the user state or display a success message here
+        } else {
+          // Handle errors, e.g., display an error message to the user
+          const errorData = await response.json();
+          console.error('User edit failed:', errorData);
+        }
+      } else {
+        // Password verification failed, show an error message to the user
+        console.error('Password verification failed');
+      }
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
   };
 
   return (
@@ -106,20 +151,20 @@ console.log(players)
           <h1>User Settings</h1>
           {/* Details View */}
           <div className="account-field">
+            <form onSubmit={handleUserEdit}>
             <h3 className="label">Username:</h3>
-            <input type="text" className="input" value={user.username} />
+            <input type="text" className="input" value={newUsername} placeholder={user.username} onChange={(e) => setNewUsername(e.target.value)}/>
             <h3 className="label">Email:</h3>
-            <input type="text" className="input" value={user.email} />
+            <input type="text" className="input" value={newEmail} placeholder={user.email}  onChange={(e) => setNewEmail(e.target.value)}/>
             <h3 className="label">Current Password:</h3>
             <input
               type="password"
               className="input"
-              value={user.password}
+              value={currentPassword}
               placeholder="Enter password to save"
+              onChange={(e) => setCurrentPassword(e.target.value)}
             />
-          </div>
-          {/* Save Options */}
-          <div id="save-options">
+            <div id="save-options">
             <button className="save-option-button" id="cancel-button">
               Cancel
             </button>
@@ -127,6 +172,9 @@ console.log(players)
              Save
             </button>
           </div>
+            </form>
+          </div>
+                   
         </div>
       )}
     </div>
