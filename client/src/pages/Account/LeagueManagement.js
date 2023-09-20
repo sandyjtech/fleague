@@ -165,7 +165,8 @@ const LeagueManagement = ({ user }) => {
           console.error("Fetch error:", error);
         });
     } else {
-      // If there's no search query, what to display?
+      console.log("Error feching players")
+      setSearchQuery("")
     }
   }, [searchQuery]);
 
@@ -267,6 +268,7 @@ const LeagueManagement = ({ user }) => {
                 user={user}
                 players={selectedPlayers}
                 onClose={closeTeamModal}
+                setIsTeamModalOpen={setIsTeamModalOpen}
               />
             </DialogContent>
           </Dialog>

@@ -10,18 +10,18 @@ import random
 import logging
 
 # Local imports
-from config import app,api, Resource, db
-from models import User, LeagueMember,League, Post, Comment, FantasyTeam, FantasyPlayer, PlayerPerformance, NFLPlayer, NFLPlayerFantasyPosition 
+from config import app,api, Resource, db, socketio
+from models import User, LeagueMember,League, Post, Comment, FantasyTeam, FantasyPlayer, PlayerPerformance, NFLPlayer, NFLPlayerFantasyPosition
 
-####### Handling Authorization #####
+####### Authorization #####
 class Signup(Resource):
     def post(self):
         req_json = request.get_json()
         try:
             new_user = User(
                 username=req_json["username"],
-                email=req_json["email"], 
-                password=req_json["password"]                             
+                email=req_json["email"],
+                password=req_json["password"]
             )
             db.session.add(new_user)
             db.session.commit()
@@ -33,7 +33,7 @@ class Signup(Resource):
         db.session.commit()
         session["user_id"] = new_user.id
         return make_response(new_user.to_dict(), 201)
-    
+
 class Login(Resource):
     def post(self):
         req_json = request.get_json()
@@ -61,7 +61,7 @@ class Authorized(Resource):
             return make_response(user.to_dict(), 200)
         else:
             return make_response({"Error": "User not found"}, 401)
-api.add_resource(Authorized, '/authorized')   
+api.add_resource(Authorized, '/authorized')
 api.add_resource(Signup, "/signup")
 api.add_resource(Login, "/login")
 api.add_resource(Logout, '/logout')
@@ -70,7 +70,7 @@ class UserDetailsById(Resource):
     def get(self, id):
         user = User.query.filter_by(id=id).first()
         if not user:
-            raise ValueError("User not found")        
+            raise ValueError("User not found")
         return make_response(user.to_dict(), 200)
     def delete(self, id):
         user = User.query.filter_by(id=id).first()
@@ -94,7 +94,7 @@ class PostResource(Resource):
         db.session.add(new_post)
         db.session.commit()
         return make_response(new_post.to_dict(rules=("-post_comments.post.post_comments",)), 200)
-         
+
 class PostResourceById(Resource):
      def patch(self, id):
         data = request.get_json()
@@ -111,7 +111,7 @@ class PostResourceById(Resource):
         db.session.add(post)
         db.session.commit()
         return make_response(post.to_dict(), 202)
-    
+
      def delete(self, id):
         post = Post.query.filter_by(id=id).first()
         if not post:
@@ -119,7 +119,7 @@ class PostResourceById(Resource):
         db.session.delete(post)
         db.session.commit()
         return make_response("", 204)
-#Comments#####################################    
+#Comments#####################################
 class CommentResource(Resource):
     def post(self):
         data = request.get_json()
@@ -130,14 +130,14 @@ class CommentResource(Resource):
         db.session.add(new_comment)
         db.session.commit()
         return make_response(new_comment.to_dict(rules=("-post.post_comments.post",)), 200)
-            
+
 class CommentByIDResource(Resource):
     def get(self, id):
         comment = Comment.query.get(id)
         if not comment:
             return make_response({"error": "Comment not found"}, 404)
         return make_response(comment.to_dict(), 200)
-    
+
     def patch(self, id):
         data = request.get_json()
         comment = Comment.query.get(id)
@@ -153,29 +153,29 @@ class CommentByIDResource(Resource):
         db.session.add(comment)
         db.session.commit()
         return make_response(comment.to_dict(), 202)
-    
+
     def delete(self, id):
         comment = Comment.query.filter_by(id=id).first()
         if not comment:
             return make_response({"error": "Comment not found"}, 404)
         db.session.delete(comment)
         db.session.commit()
-        return make_response("", 204)        
-                 
+        return make_response("", 204)
+
 class CommentsByPostIdResource(Resource):
     def get(self, post_id):
         comments = Comment.query.filter_by(post_id=post_id).all()
         if not comments:
             return make_response({"error": "Comments not found for this post"}, 404)
         return make_response([comment.to_dict() for comment in comments], 200)
-       
+
 class CommentByIDResource(Resource):
     def get(self, id):
         comment = Comment.query.get(id)
         if not comment:
             return make_response({"error": "Comment not found"}, 404)
         return make_response(comment.to_dict(), 200)
-    
+
     def patch(self, id):
         data = request.get_json()
         comment = Comment.query.get(id)
@@ -191,15 +191,15 @@ class CommentByIDResource(Resource):
         db.session.add(comment)
         db.session.commit()
         return make_response(comment.to_dict(), 202)
-    
+
     def delete(self, id):
         comment = Comment.query.filter_by(id=id).first()
         if not comment:
             return make_response({"error": "Comment not found"}, 404)
         db.session.delete(comment)
         db.session.commit()
-        return make_response("", 204)        
-                 
+        return make_response("", 204)
+
 class CommentsByPostIdResource(Resource):
     def get(self, post_id):
         comments = Comment.query.filter_by(post_id=post_id).all()
@@ -211,28 +211,28 @@ api.add_resource(PostResourceById, '/api/post/<int:id>')
 api.add_resource(CommentResource, '/api/comments')
 api.add_resource(CommentByIDResource, '/api/comments/<int:id>')
 api.add_resource(CommentsByPostIdResource, '/api/post-comment/<int:post_id>')
-#All NFL Players##################################### 
+#All NFL Players#####################################
 class NFLPlayersResource(Resource):
     def get(self):
         page = request.args.get('page', default=1, type=int)
         page_size = request.args.get('pageSize', default=10, type=int)
-        
+
         # Calculate offset and limit based on pagination parameters
         offset = (page - 1) * page_size
         limit = page_size
-        
+
         # Query all players from the database
         all_players = NFLPlayer.query.all()
-        
+
         # Randomly shuffle the players
         random.shuffle(all_players)
-        
+
         # Get the subset of players based on pagination
         players_subset = all_players[offset:offset + limit]
-        
+
         # Return paginated player data as a JSON response
         return make_response([player.to_dict(rules=("-fantasy_positions",)) for player in players_subset], 200)
-     
+
 #All Players without Pagination adn Search Bar
 class NFLPlayersSearchResource(Resource):
     def get(self):
@@ -256,7 +256,7 @@ class PlayersById(Resource):
         player = NFLPlayer.query.filter_by(id=id).first()
         if not player:
             raise ValueError("Could not find pet")
-        return make_response(player.to_dict(), 200)    
+        return make_response(player.to_dict(), 200)
 api.add_resource(PlayersById, '/api/players/<int:id>', endpoint='api/players/<int:id>')
 
 #Create myu Fantasy Players and Fantasy Team
@@ -275,8 +275,8 @@ class FantasyPlayersResource(Resource):
         except Exception as e:
             logging.error(f"Error in post method: {str(e)}")
             return make_response({"errors": [str(e)]}, 400)
-        
-api.add_resource(FantasyPlayersResource, '/api/fantasy_players')        
+
+api.add_resource(FantasyPlayersResource, '/api/fantasy_players')
 class FantasyPlayerByID(Resource):
     def get(self, id):
         player = FantasyPlayer.query.filter_by(id=id).first()
@@ -289,8 +289,28 @@ class FantasyPlayerByID(Resource):
             return make_response({"error": "Comment not found"}, 404)
         db.session.delete(player)
         db.session.commit()
-        return make_response("", 204)    
+        return make_response("", 204)
 api.add_resource(FantasyPlayerByID, '/api/fantasy_players/<int:id>')
+
+class FantasyPlayersByUserIDResource(Resource):
+    def get(self, user_id):
+        try:
+            # Find the FantasyTeam associated with the user_id
+            fantasy_team = FantasyTeam.query.filter_by(user_id=user_id).first()
+
+            if not fantasy_team:
+                return {"message": "Fantasy team not found for this user."}, 404
+
+            # Get the FantasyPlayers associated with the FantasyTeam
+            players = fantasy_team.team_players
+
+            # Serialize the players into a list of dictionaries
+            serialized_players = [player.to_dict(rules=("-user",)) for player in players]
+
+            return {"players": serialized_players}, 200
+        except Exception as e:
+            return {"error": str(e)}, 500
+api.add_resource(FantasyPlayersByUserIDResource, "/api/fantasy_players_by_user_id/<int:user_id>")
 
 class PlayerPerformanceByNflId(Resource):
     def get(self, nfl_player_id):
@@ -306,9 +326,9 @@ class PlayerPerformanceByNflId(Resource):
         return make_response({
             "player": player.to_dict(),
             "performances": [performance.to_dict() for performance in performances]
-        }, 200)     
-api.add_resource(PlayerPerformanceByNflId, '/api/player_by_nfl_id/<string:nfl_player_id>')  
-     
+        }, 200)
+api.add_resource(PlayerPerformanceByNflId, '/api/player_by_nfl_id/<string:nfl_player_id>')
+
 class FantasyTeamResource(Resource):
     def get(self):
         teams = [t.to_dict() for t in FantasyTeam.query.all()]
@@ -322,104 +342,120 @@ class FantasyTeamResource(Resource):
         db.session.add(new_team)
         db.session.commit()
         return make_response(new_team.to_dict(rules=("-team_players",)), 200)
-api.add_resource(FantasyTeamResource, '/api/fantasy_teams')       
+api.add_resource(FantasyTeamResource, '/api/fantasy_teams')
+api.add_resource(NFLPlayersResource, '/api/players')
 
-api.add_resource(NFLPlayersResource, '/api/players')       
 
-class FantasyTeamById(Resource):
-    def delete(self, id):
-        team = FantasyTeam.query.filter_by(id=id).first()
-        if not team:
-            return make_response({"error": "Comment not found"}, 404)
-        db.session.delete(team)
-        db.session.commit()
-        return make_response("", 204) 
-api.add_resource(FantasyTeamById, '/api/fantasy_teams/<int:id>')
-   
-class FantasyPlayersByUserIDResource(Resource):
-    
+class PlayersPerformanceByUserIDResource(Resource):
     def get(self, user_id):
+        # Fetch the fantasy team for the given user_id
         team = FantasyTeam.query.filter_by(user_id=user_id).first()
-    
+
         if not team:
-                return make_response({"error": "Fantasy team not found for this user"}, 404)
+            # Handle the case where the user does not have a fantasy team
+            return make_response(jsonify({"message": "Fantasy team not found for this user."}), 404)
 
-        # Get the team name
-        team_name = team.name
+        # Get the player IDs in the team
+        player_ids_in_team = [fantasy_player.nfl_player_id for fantasy_player in team.team_players]
 
-        players = FantasyPlayer.query\
-            .join(FantasyTeam)\
-            .filter(FantasyTeam.user_id == user_id)\
-            .all()
-        
-        if not players:
-            return make_response({"error": "Fantasy players not found for this user"}, 404)
+        # Fetch all player performances from the database for players in the team
+        performances = PlayerPerformance.query.filter(PlayerPerformance.fantasy_player_id.in_(player_ids_in_team)).all()
 
-        # Create a list to store player details
-        player_details = []
+        # Create a list of dictionaries containing performance and player information
+        performance_data = []
+        for performance in performances:
+            player = NFLPlayer.query.get(performance.fantasy_player_id)
+            fantasy_player = FantasyPlayer.query.filter_by(nfl_player_id=performance.fantasy_player_id).first()
+            if player:
+                performance_data.append({
+                    "team_name": team.name,
+                    "first_name": player.first_name,
+                    "last_name": player.last_name,
+                    "team": player.team,
+                    "position": player.position,
+                    "standard_points": performance.standard_points,
+                    "ppr_points": performance.ppr_points,
+                    "match_id": performance.match_id,
+                    "week_num": performance.week_num,
+                    "is_benched": fantasy_player.is_benched  # Include is_benched attribute
+                })
 
-        for player in players:
-            nfl_player = player.nfl_player
+        return make_response(jsonify(performance_data), 200)
+api.add_resource(PlayersPerformanceByUserIDResource, "/api/performance_by_user/<int:user_id>")
 
-            player_detail = {
-                'fantasy_player_id': player.id,
-                'nfl_player_id': nfl_player.id,
-                'first_name': nfl_player.first_name,
-                'last_name': nfl_player.last_name,
-                'team': nfl_player.team,
-                'position': nfl_player.position,                
-            }
-            
-            player_details.append(player_detail)
-
-        # Include the team name in the response
-        response_data = {
-            'team_name': team_name,
-            'players': player_details,
-        }
-
-        return make_response(response_data, 200)
-api.add_resource(FantasyPlayersByUserIDResource, "/api/player_by_userid/<int:user_id>")
-
-##Player Scores
 class PlayerPerformances(Resource):
-    def all_scores():
-    # Fetch all player performances from the database
+   def get(self):
+        # Fetch all player performances from the database
         performances = PlayerPerformance.query.all()
 
-    # Define the headers for the table
-        headers = ['First Name', 'Last Name', 'Position', 'Team', 'Standard Points', 'PPR Points']
+        # Create a list of dictionaries containing performance and player information
+        performance_data = []
+        for performance in performances:
+            player = NFLPlayer.query.get(performance.fantasy_player_id)
+            if player:
+                performance_data.append({
+                    "first_name": player.first_name,
+                    "last_name": player.last_name,
+                    "team": player.team,
+                    "position": player.position,
+                    "standard_points": performance.standard_points,
+                    "ppr_points": performance.ppr_points,
+                    "match_id": performance.match_id,
+                    "week_num": performance.week_num,
+                })
 
-    # Create a list of dictionaries with player information
-        player_data = [
-            {
-            'First Name': performance.fantasy_player.nfl_player.first_name,
-            'Last Name': performance.fantasy_player.nfl_player.last_name,
-            'Position': performance.fantasy_player.nfl_player.position,
-            'Team': performance.fantasy_player.nfl_player.team,
-            'Standard Points': performance.standard_points,
-            'PPR Points': performance.ppr_points
-            }
-            for performance in performances
-        ]
-   
-    def post(self):
-        data = request.get_json()
-        try:
-            new_team = PlayerPerformance(**data)
-        except:
-            return make_response({"errors" : ["validations errors"]}, 400)
-        db.session.add(new_team)
-        db.session.commit()
-        return make_response(new_team.to_dict(rules=("-team_players",)), 200)
+        response = make_response(jsonify(performance_data), 200)
+        return response
 api.add_resource(PlayerPerformances, "/api/player_performances")
-class PlayerPerformancesByPlayerId(Resource):
-    def get(self, player_id):
-        scores = PlayerPerformance.query.filter_by(fantasy_player_id=player_id).all()
-        if not scores:
-            return make_response({"error": "Scores not found for this player"}, 404)
-        return make_response([scores.to_dict() for scores in scores], 200)
-api.add_resource(PlayerPerformancesByPlayerId, "/api/player_performances/<int:player_id>")
+#leaderboard
+class Leaderboard(Resource):
+    def get(self):
+        # Fetch all users
+        users = User.query.all()
 
+        # Create a dictionary to store the performance data for all users
+        performance_data = {}
+
+        for user in users:
+            # Fetch the fantasy team for the current user
+            team = FantasyTeam.query.filter_by(user_id=user.id).first()
+
+            if not team:
+                # Handle the case where the user does not have a fantasy team
+                continue  # Skip this user and move to the next one if not available
+
+            # Get the player IDs in the team
+            player_ids_in_team = [fantasy_player.nfl_player_id for fantasy_player in team.team_players]
+
+            # Fetch all player performances from the database for players in the team
+            performances = PlayerPerformance.query.filter(PlayerPerformance.fantasy_player_id.in_(player_ids_in_team)).all()
+
+            # Create a list of dictionaries containing performance information for this user
+            user_performance_data = []
+            for performance in performances:
+                player = NFLPlayer.query.get(performance.fantasy_player_id)
+                fantasy_player = FantasyPlayer.query.filter_by(nfl_player_id=performance.fantasy_player_id).first()
+                if player:
+                    user_performance_data.append({
+                        "first_name": player.first_name,
+                        "last_name": player.last_name,
+                        "team": player.team,
+                        "position": player.position,
+                        "standard_points": performance.standard_points,
+                        "ppr_points": performance.ppr_points,
+                        "match_id": performance.match_id,
+                        "week_num": performance.week_num,
+                        "is_benched": fantasy_player.is_benched
+                    })
+
+            # Add the user's performance data to the dictionary with their username as the key
+            performance_data[user.username] = user_performance_data
+
+        return make_response(jsonify(performance_data), 200)
+api.add_resource(Leaderboard, "/api/leaderboard")
+##Chat Events
+
+    
+    
 if __name__ == '__main__':
-    app.run(port=5555, debug=True)
+    socketio.run(app, debug=True, port=5555)

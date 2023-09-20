@@ -4,7 +4,6 @@ import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import Avatar from "@mui/material/Avatar"; // Import Avatar component
 
 
 const MyProfile = ({ user }) => {
@@ -12,23 +11,23 @@ const MyProfile = ({ user }) => {
   const [selectedMenu, setSelectedMenu] = useState("myAccount"); // Default selected menu
 
   useEffect(() => {
-    fetch(`/api/player_by_userid/${user.id}`)
+    fetch(`/api/fantasy_players_by_user_id/${user.id}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
         return response.json();
       })
-      .then((data) => {
-        if (data.team_name) {
+      .then((data) => {        
           setPlayers(data.players);
-        }
+        
       })
       .catch((error) => {
         console.error("Error fetching fantasy players:", error);
       });
   }, [user.id]);
 
+console.log(players)
   const handleMenuClick = (menu) => {
     setSelectedMenu(menu);
   };
@@ -84,13 +83,13 @@ const MyProfile = ({ user }) => {
                   <Card style={{ backgroundColor: '#142e60',  padding: '0.5px 2px' }}>
                     <CardContent className="card-content">
                       <Typography variant="h6" sx={{ color:'whitesmoke', fontFamily: "Roboto Slab, serif" ,'@media (max-width: 600px)': { variant: 'body1' } }}>
-                        {player.first_name} {player.last_name}
+                        {player.nfl_player.first_name} {player.nfl_player.last_name}
                       </Typography>
                       <Typography variant="body2" component="div" className="team-info" style={{ fontFamily: "Roboto Slab, serif"}}>
-                        Position: {player.position}
+                        Position: {player.nfl_player.position}
                       </Typography>
                       <Typography variant="body2" component="div" className="team-info" style={{ fontFamily: "Roboto Slab, serif"}}>
-                        Team: {player.team}
+                        Team: {player.nfl_player.team}
                       </Typography>
                     </CardContent>
                   </Card>

@@ -1,33 +1,19 @@
-/* Scores.css */
+/* Styles for MyScores component */
 .my-scores-container {
-  text-align: center;
-  margin: 20px auto;
+  
   width: 100%;
-  padding: 20px;
-  background-color: whitesmoke;  
-  border-radius: 5px;
+
 }
 
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
 .scores-table {
   display: flex;
-  justify-content: space-between;
-  background-color: #333;
-  border-radius: 5px;
-  margin: 5% 0;
-}
-
-.team-column,
-.vs-column,
-.opponent-column {
-    
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  text-align: justify;
-}
-
-.vs-column {
-  background-color: #333; 
+  margin: 0 auto
+ 
 }
 
 ul {
@@ -40,4 +26,35 @@ li {
   margin-bottom: 10px;
   padding: 5px;
   border: 1px solid #ccc;
+}
+
+/* Scrollable player performance cards */
+.scrollable-card-container {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* Additional styles for player performance cards */
+.player-card {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: white;
+}
+
+.player-card h2 {
+  margin: 0;
+}
+
+.player-card p {
+  margin: 5px 0;
+}
+
+/* Style for the team name header */
+.team-header {
+  background-color: #333;
+  color: white;
+  padding: 10px;
+  font-weight: bold;
 }

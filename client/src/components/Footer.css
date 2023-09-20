@@ -1,12 +1,11 @@
 /* Footer.css */
 
 .footer {
-  background-color: #142e60;
-  
+  background-color: #142e60;  
   text-align: center;
   padding: 20px 0;
   position: relative;
-  z-index: 1;
+  width: 100%; 
   border-radius: 5px;
 }
 

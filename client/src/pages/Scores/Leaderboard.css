@@ -1,0 +1,84 @@
+/* Add styles for the first user with a green border */
+/* Styling for the leaderboard container */
+.leaderboard-container {
+width: 100%;  
+  background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+    flex: 1; /* Make Leaderboard take up remaining space */
+  }
+  
+  /* Styling for the header */
+  h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+.firstUser {
+    width: 100%;
+    background: whitesmoke;
+    border: 2px solid  #4caf50;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+  
+  /* Add styles for other users with a blue border */
+  .otherUser {
+    background: #ccc;
+    border: 2px solid #142e60;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+  /* Styling for user titles */
+h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  /* Styling for user total points */
+  p {
+    font-size: 16px;
+    margin-bottom: 8px;
+    color: #666;
+  }
+  
+  /* Styling for the table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  /* Styling for table headers */
+  th {
+    width: 100%;
+    background-color: #333;
+    color: #fff;
+    font-weight: bold;
+    text-align: left;
+    padding: 10px;
+  }
+  
+  /* Styling for table rows */
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  /* Styling for table cells */
+  td {
+    padding: 10px;
+  }
+  
+  /* Styling for table cell with player names */
+  td:first-child {
+    font-weight: bold;
+  }
+  
+  /* Add hover effect on table rows */
+  tr:hover {
+    background-color: #ddd;
+  }
+  

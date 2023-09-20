@@ -7,8 +7,9 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import "./Account.css";
 
-const ConfirmTeamModal = ({ players, onClose, user }) => {
-  const [teamName, setTeamName] = useState("");
+const ConfirmTeamModal = ({ players, onClose, user, setIsTeamModalOpen }) => {
+  const [teamName, setTeamName] = useState(""); 
+
   const [fantasyPlayers, setFantasyPlayers] = useState(
     players.map((player) => ({
       ...player,
@@ -78,6 +79,7 @@ const ConfirmTeamModal = ({ players, onClose, user }) => {
             })
             .then((createdPlayer) => {
               console.log("Player created:", createdPlayer);
+              setIsTeamModalOpen(false)
             })
             .catch((error) => {
               console.error("Error creating player:", error);

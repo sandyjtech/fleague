@@ -100,7 +100,10 @@ class FantasyTeam(db.Model, SerializerMixin):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     name = db.Column(db.String())      
     team_players = db.relationship("FantasyPlayer", backref="fantasy_team")
-    serialize_rules = ("-team_players",)
+    players = association_proxy("team_players", "player")
+    
+    
+    serialize_rules = ("-team_players", "-fantasy_team",)
 
 class FantasyPlayer(db.Model, SerializerMixin):
     __tablename__ = "fantasy_players"
@@ -115,7 +118,7 @@ class FantasyPlayer(db.Model, SerializerMixin):
         backref="fantasy_player", cascade="delete"
     )
  
-    serialize_rules = ("-performances.fantasy_player",)
+    serialize_rules = ("-performances.fantasy_player", "-performances",)
 
 class PlayerPerformance(db.Model, SerializerMixin):
     __tablename__ = "player_performances"
@@ -151,7 +154,7 @@ class NFLPlayer(db.Model, SerializerMixin):
     # Add other fields as needed
     f_players = db.relationship("FantasyPlayer", backref="nfl_player", cascade="delete")
     fantasy_positions = db.relationship("NFLPlayerFantasyPosition", backref="nfl_player", cascade="delete")
-    serialize_rules = ("-fantasy_positions", "-f_players.nfl_player",)
+    serialize_rules = ("-fantasy_positions", "-f_players.nfl_player", "-nfl_player.f_players",)
     
 class NFLPlayerFantasyPosition(db.Model, SerializerMixin):
     __tablename__ = "nfl_player_fantasy_positions"
