@@ -20,7 +20,8 @@
 
 ## Introduction
 The NFLeague app is a web-based platform that provides users with features such as live chat, fantasy team creation, player/team stats, posting/commenting, and more. This README serves as a guide to set up, configure, and use the app effectively.
-![alt text](https://drive.google.com/file/d/1gMEKn4_LreNQUOpZ5E4LNUrJ4G-qzK1S/view?usp=sharing)
+![NFLLEAGUE_SHOT](https://github.com/sandyjtech/fleague/assets/129788051/8d8233c5-c34f-4075-ad51-9e8644faa520)
+
 
 
 
