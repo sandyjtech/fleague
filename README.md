@@ -20,6 +20,9 @@
 
 ## Introduction
 The NFLeague app is a web-based platform that provides users with features such as live chat, fantasy team creation, player/team stats, posting/commenting, and more. This README serves as a guide to set up, configure, and use the app effectively.
+![alt text](https://drive.google.com/file/d/1gMEKn4_LreNQUOpZ5E4LNUrJ4G-qzK1S/view?usp=sharing)
+![alt text](https://drive.google.com/file/d/1OswkTXvCAthvA92tyyojGqP4eEecqmce/preview)
+
 
 ## Features
 ### Key Features:
@@ -32,20 +35,20 @@ The NFLeague app is a web-based platform that provides users with features such 
 
 ## Prerequisites
 Before getting started, ensure you have the following prerequisites installed and configured:
-- Python (version X.X)
-- Flask (version X.X)
+- Python 
+- Flask 
 - MySQL or another relational database
-- SQLAlchemy (version X.X)
+- SQLAlchemy 
 - Node.js (for frontend)
 - Socket.io (for real-time features)
-- Other dependencies...
+- Beautiful DND
 
 ## Installation
 1. Clone this repository to your local machine:
 
-```bash
+
 git clone https://github.com/sandyjtech/fleague
-cd nfleague
+cd fleague
 
 
 The app will be accessible at http://localhost:3000.
@@ -164,3 +167,6 @@ The NFLeague app utilizes SQLAlchemy to manage the database. Below is an overvie
       - `fantasy_position`: Fantasy position of the NFL player.
 
 These tables define the structure of the NFLeague database, allowing for the storage and management of user data, posts, comments, fantasy teams, player performances, and NFL player information.
+
+## Contact Information
+-LinkedIn: https://www.linkedin.com/in/sandra--gonzalez/
