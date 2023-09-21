@@ -53,18 +53,18 @@ cd fleague
 
 The app will be accessible at http://localhost:3000.
 
-*Accessing the Home Page
+- Accessing the Home Page
 Visit the app's home page to see last year's stats and upcoming schedule changes.
-*Live Chat
+- Live Chat
 Use the live chat feature to engage in real-time conversations with other users.
-*Fantasy Team Creation
+- Fantasy Team Creation
 Create your fantasy team by navigating to the fantasy team creation section.
 Use drag-and-drop functionality to add players to your team.
-*Viewing Fantasy Teams
+- Viewing Fantasy Teams
 Access your fantasy teams and view player stats from the frontend.
-*Player and Team Stats
+- Player and Team Stats
 Retrieve player and team statistics, including those from the previous year and upcoming schedule changes.
-*Posting and Commenting
+- Posting and Commenting
 Share posts and comment on posts made by other users.
 
 
